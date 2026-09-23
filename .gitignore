@@ -19,7 +19,8 @@ client/.flutter-plugins-dependencies
 client/.packages
 client/.pub-cache/
 client/.pub/
-client/build/
+client/build/*
+!client/build/web/
 client/.idea/
 client/*.iml
 *.iml
