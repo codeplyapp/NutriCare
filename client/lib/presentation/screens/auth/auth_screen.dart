@@ -230,56 +230,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Top Mascot / Logo Badge
+                        // Brand Logo Clean (Tanpa kartu pembungkus & tanpa teks lencana)
                         Center(
-                          child: Stack(
-                            alignment: Alignment.bottomCenter,
-                            clipBehavior: Clip.none,
-                            children: [
-                              Container(
-                                width: 84,
-                                height: 84,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE8F7FF),
-                                  borderRadius: BorderRadius.circular(22),
-                                  border: Border.all(color: const Color(0xFFD0EDFF), width: 1.5),
-                                ),
-                                padding: const EdgeInsets.all(10),
-                                child: Image.asset(
-                                  'assets/images/logo.png',
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              Positioned(
-                                bottom: -8,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: _brandBlue,
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0x330077C0),
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: const Text(
-                                    'NUTRICARE',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w800,
-                                      letterSpacing: 0.8,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            height: 84,
+                            fit: BoxFit.contain,
                           ),
                         ),
-                        const SizedBox(height: 22),
+                        const SizedBox(height: 16),
 
                         // Title: "Selamat Datang!"
                         Text(
