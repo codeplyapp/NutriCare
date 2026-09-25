@@ -374,18 +374,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Widget _buildGoogleIcon() {
-    return Container(
+    return Image.asset(
+      'assets/images/google_logo.png',
       width: 20,
       height: 20,
-      alignment: Alignment.center,
-      child: const Text(
-        'G',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w900,
-          color: Color(0xFF4285F4),
-        ),
-      ),
+      fit: BoxFit.contain,
     );
   }
 
