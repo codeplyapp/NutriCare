@@ -22,31 +22,31 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAbq3O-djKPmpT2HSwvk7Dgq05u0ugLx9I',
-    appId: '1:650630561254:web:fbc5688a1d73af8a37aa27',
+    appId: '1:650630561254:web:a935c75b46e0f18437aa27',
     messagingSenderId: '650630561254',
     projectId: 'nutricare-5cf9d',
     authDomain: 'nutricare-5cf9d.firebaseapp.com',
     storageBucket: 'nutricare-5cf9d.firebasestorage.app',
-    measurementId: 'G-C957HEN06F',
+    measurementId: 'G-F47PEQR7K8',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAbq3O-djKPmpT2HSwvk7Dgq05u0ugLx9I',
-    appId: '1:650630561254:web:fbc5688a1d73af8a37aa27',
+    appId: '1:650630561254:web:a935c75b46e0f18437aa27',
     messagingSenderId: '650630561254',
     projectId: 'nutricare-5cf9d',
     authDomain: 'nutricare-5cf9d.firebaseapp.com',
     storageBucket: 'nutricare-5cf9d.firebasestorage.app',
-    measurementId: 'G-C957HEN06F',
+    measurementId: 'G-F47PEQR7K8',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAbq3O-djKPmpT2HSwvk7Dgq05u0ugLx9I',
-    appId: '1:650630561254:web:fbc5688a1d73af8a37aa27',
+    appId: '1:650630561254:web:a935c75b46e0f18437aa27',
     messagingSenderId: '650630561254',
     projectId: 'nutricare-5cf9d',
     authDomain: 'nutricare-5cf9d.firebaseapp.com',
     storageBucket: 'nutricare-5cf9d.firebasestorage.app',
-    measurementId: 'G-C957HEN06F',
+    measurementId: 'G-F47PEQR7K8',
   );
 }
