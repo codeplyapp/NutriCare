@@ -206,10 +206,10 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
             margin: const EdgeInsets.only(right: AppSpacing.md),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: _remainingSeconds < 180 ? const Color(0xFFFEE2E2) : AppColors.surfacePearl,
+              color: _remainingSeconds < 180 ? AppColors.darkAmethyst100 : AppColors.surfacePearl,
               borderRadius: AppShapes.input,
               border: Border.all(
-                color: _remainingSeconds < 180 ? const Color(0xFFEF4444) : AppColors.border,
+                color: _remainingSeconds < 180 ? AppColors.darkAmethyst300 : AppColors.border,
               ),
             ),
             child: Row(
@@ -217,14 +217,14 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                 Icon(
                   Icons.timer_outlined,
                   size: 16,
-                  color: _remainingSeconds < 180 ? const Color(0xFFDC2626) : AppColors.textPrimary,
+                  color: _remainingSeconds < 180 ? AppColors.darkAmethyst800 : AppColors.textPrimary,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   _formatTimer(),
                   style: AppTypography.finePrint.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: _remainingSeconds < 180 ? const Color(0xFFDC2626) : AppColors.textPrimary,
+                    color: _remainingSeconds < 180 ? AppColors.darkAmethyst800 : AppColors.textPrimary,
                   ),
                 ),
               ],

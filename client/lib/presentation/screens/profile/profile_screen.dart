@@ -96,13 +96,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFDCFCE7),
+                                color: AppColors.frozenWater100,
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
                                 'Terhubung',
                                 style: AppTypography.finePrint.copyWith(
-                                  color: const Color(0xFF166534),
+                                  color: AppColors.frozenWater800,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -129,11 +129,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             const SizedBox(height: 8),
             Row(
               children: [
-                _IotMetricChip(icon: Icons.directions_walk_rounded, label: 'Langkah Kaki', color: AppColors.primary),
+                _IotMetricChip(icon: Icons.directions_walk_rounded, label: 'Langkah Kaki', color: AppColors.turquoise600),
                 const SizedBox(width: 8),
-                _IotMetricChip(icon: Icons.local_fire_department_rounded, label: 'Kalori Aktif', color: const Color(0xFFF97316)),
+                _IotMetricChip(icon: Icons.local_fire_department_rounded, label: 'Kalori Aktif', color: AppColors.frozenWater700),
                 const SizedBox(width: 8),
-                _IotMetricChip(icon: Icons.favorite_rounded, label: 'Detak Jantung', color: const Color(0xFFEF4444)),
+                _IotMetricChip(icon: Icons.favorite_rounded, label: 'Detak Jantung', color: AppColors.darkAmethyst600),
               ],
             ),
           ],

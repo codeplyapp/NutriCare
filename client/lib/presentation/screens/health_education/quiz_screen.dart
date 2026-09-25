@@ -82,12 +82,12 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: res.passed ? AppColors.frozenWater100 : const Color(0xFFFEE2E2),
+                  color: res.passed ? AppColors.frozenWater100 : AppColors.darkAmethyst100,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   res.passed ? Icons.emoji_events_rounded : Icons.replay_rounded,
-                  color: res.passed ? AppColors.frozenWater800 : const Color(0xFFDC2626),
+                  color: res.passed ? AppColors.frozenWater800 : AppColors.darkAmethyst800,
                   size: 36,
                 ),
               ),

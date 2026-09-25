@@ -171,28 +171,28 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                     delay: const Duration(milliseconds: 50),
                     child: Row(
                       children: [
-                        // Card 1: Step to walk
+                        // Card 1: Step to walk (Turquoise)
                         Expanded(
                           child: _TwinMetricCard(
                             title: 'Langkah Kaki',
                             value: '6.420',
                             unit: 'langkah',
                             icon: Icons.directions_walk_rounded,
-                            iconBg: const Color(0xFFFFEDD5),
-                            iconColor: const Color(0xFFEA580C),
+                            iconBg: AppColors.turquoise100,
+                            iconColor: AppColors.turquoise700,
                             onTap: () => context.go('/meal-planner'),
                           ),
                         ),
                         const SizedBox(width: 14),
-                        // Card 2: Drink Water
+                        // Card 2: Drink Water (Frozen Water)
                         Expanded(
                           child: _TwinMetricCard(
                             title: 'Minum Air',
                             value: '$waterGlasses',
-                            unit: 'gelas (${waterMl.toInt()} ml)',
+                            unit: 'gelas (${waterMl.toInt()}/${targetWaterMl.toInt()} ml)',
                             icon: Icons.water_drop_rounded,
-                            iconBg: const Color(0xFFE0F2FE),
-                            iconColor: const Color(0xFF0284C7),
+                            iconBg: AppColors.frozenWater100,
+                            iconColor: AppColors.frozenWater800,
                             onTap: () => context.go('/meal-planner'),
                           ),
                         ),
@@ -785,10 +785,10 @@ class _WeeklyCalendarStrip extends StatelessWidget {
                   duration: const Duration(milliseconds: 150),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFFBEF264) : Colors.transparent,
+                    color: isSelected ? AppColors.frozenWater200 : Colors.transparent,
                     borderRadius: BorderRadius.circular(14),
                     border: isSelected
-                        ? Border.all(color: const Color(0xFFA3E635), width: 1)
+                        ? Border.all(color: AppColors.frozenWater500, width: 1.5)
                         : Border.all(color: Colors.transparent),
                   ),
                   child: Column(
@@ -799,7 +799,7 @@ class _WeeklyCalendarStrip extends StatelessWidget {
                         style: AppTypography.finePrint.copyWith(
                           fontSize: 11,
                           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                          color: isSelected ? const Color(0xFF1E293B) : AppColors.textSecondary,
+                          color: isSelected ? AppColors.frozenWater900 : AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -808,7 +808,7 @@ class _WeeklyCalendarStrip extends StatelessWidget {
                         style: AppTypography.captionStrong.copyWith(
                           fontSize: 14,
                           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? const Color(0xFF1E293B) : AppColors.textPrimary,
+                          color: isSelected ? AppColors.frozenWater900 : AppColors.textPrimary,
                         ),
                       ),
                     ],
@@ -884,7 +884,7 @@ class _MealBreakdownCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(Icons.local_fire_department_rounded, size: 16, color: Color(0xFFF97316)),
+                    const Icon(Icons.local_fire_department_rounded, size: 16, color: AppColors.turquoise700),
                     const SizedBox(width: 4),
                     Text(
                       calorieRange,
@@ -981,8 +981,8 @@ class _DrNutriBannerCard extends StatelessWidget {
     return AppCard(
       onTap: onTap,
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-      backgroundColor: AppColors.frozenWater50,
-      border: Border.all(color: AppColors.frozenWater300, width: 1.5),
+      backgroundColor: AppColors.darkAmethyst50,
+      border: Border.all(color: AppColors.darkAmethyst200, width: 1.5),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -993,18 +993,18 @@ class _DrNutriBannerCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: AppColors.frozenWater200,
+                    color: AppColors.darkAmethyst100,
                     borderRadius: AppShapes.pill,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.auto_awesome, size: 12, color: AppColors.primaryHover),
+                      const Icon(Icons.auto_awesome, size: 12, color: AppColors.darkAmethyst700),
                       const SizedBox(width: 4),
                       Text(
                         'ASISTEN GIZI AI',
                         style: AppTypography.finePrint.copyWith(
-                          color: AppColors.primaryHover,
+                          color: AppColors.darkAmethyst700,
                           fontWeight: FontWeight.w700,
                           fontSize: 10.5,
                           letterSpacing: 0.5,
@@ -1036,13 +1036,13 @@ class _DrNutriBannerCard extends StatelessWidget {
                     Text(
                       'Mulai Tanya Sekarang',
                       style: AppTypography.captionStrong.copyWith(
-                        color: AppColors.primaryHover,
+                        color: AppColors.darkAmethyst600,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(width: 4),
-                    const Icon(Icons.arrow_forward_rounded, size: 15, color: AppColors.primaryHover),
+                    const Icon(Icons.arrow_forward_rounded, size: 15, color: AppColors.darkAmethyst600),
                   ],
                 ),
               ],

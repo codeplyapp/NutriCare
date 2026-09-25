@@ -167,18 +167,18 @@ class DoctorListScreen extends ConsumerWidget {
                                               Container(
                                                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                                                 decoration: BoxDecoration(
-                                                  color: const Color(0xFFFEF3C7),
+                                                  color: AppColors.darkAmethyst100,
                                                   borderRadius: AppShapes.pill,
                                                 ),
                                                 child: Row(
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
-                                                    const Icon(Icons.star_rounded, color: Color(0xFFD97706), size: 14),
+                                                    const Icon(Icons.star_rounded, color: AppColors.darkAmethyst700, size: 14),
                                                     const SizedBox(width: 3),
                                                     Text(
                                                       '${doc.rating}',
                                                       style: AppTypography.finePrint.copyWith(
-                                                        color: const Color(0xFF92400E),
+                                                        color: AppColors.darkAmethyst800,
                                                         fontWeight: FontWeight.w700,
                                                       ),
                                                     ),

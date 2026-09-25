@@ -180,13 +180,13 @@ class NutritionStatisticModal extends StatelessWidget {
                 crossAxisSpacing: 12,
                 childAspectRatio: 1.35,
                 children: [
-                  // Exercise
+                  // Exercise (Turquoise)
                   _MetricCard(
                     title: 'Olahraga',
                     value: '1.5 jam',
                     icon: Icons.directions_run_rounded,
-                    iconBg: const Color(0xFFDCFCE7),
-                    iconColor: const Color(0xFF16A34A),
+                    iconBg: AppColors.turquoise100,
+                    iconColor: AppColors.turquoise700,
                     previewWidget: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: List.generate(
@@ -196,7 +196,7 @@ class NutritionStatisticModal extends StatelessWidget {
                           height: (8 + (i * 3.5)).toDouble(),
                           margin: const EdgeInsets.symmetric(horizontal: 2),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF16A34A),
+                            color: AppColors.turquoise700,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -204,36 +204,36 @@ class NutritionStatisticModal extends StatelessWidget {
                     ),
                   ),
 
-                  // BPM Heart Rate
+                  // BPM Heart Rate (Dark Amethyst)
                   _MetricCard(
                     title: 'BPM Jantung',
                     value: '76 bpm',
                     icon: Icons.favorite_rounded,
-                    iconBg: const Color(0xFFFEE2E2),
-                    iconColor: const Color(0xFFDC2626),
+                    iconBg: AppColors.darkAmethyst100,
+                    iconColor: AppColors.darkAmethyst700,
                     previewWidget: CustomPaint(
                       size: const Size(48, 18),
                       painter: _ECGWavePainter(),
                     ),
                   ),
 
-                  // Weight
+                  // Weight (Rich Cerulean)
                   const _MetricCard(
                     title: 'Berat Badan',
                     value: '68.0 kg',
                     icon: Icons.fitness_center_rounded,
-                    iconBg: Color(0xFFFFEDD5),
-                    iconColor: Color(0xFFEA580C),
+                    iconBg: AppColors.richCerulean100,
+                    iconColor: AppColors.richCerulean700,
                     subtext: 'Ideal BMI 22.2',
                   ),
 
-                  // Water
+                  // Water (Frozen Water)
                   _MetricCard(
                     title: 'Air Mineral',
                     value: '${(waterMl / 250).toInt()} gelas',
                     icon: Icons.water_drop_rounded,
-                    iconBg: const Color(0xFFE0F2FE),
-                    iconColor: const Color(0xFF0284C7),
+                    iconBg: AppColors.frozenWater100,
+                    iconColor: AppColors.frozenWater800,
                     previewWidget: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: List.generate(
@@ -242,7 +242,7 @@ class NutritionStatisticModal extends StatelessWidget {
                           Icons.water_drop_rounded,
                           size: 14,
                           color: i < (waterMl / 450).clamp(0, 5)
-                              ? const Color(0xFF0284C7)
+                              ? AppColors.frozenWater800
                               : AppColors.border,
                         ),
                       ),
@@ -290,10 +290,10 @@ class _WeeklyBarItem extends StatelessWidget {
           width: 22,
           height: barHeight,
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFFA3E635) : AppColors.border,
+            color: isActive ? AppColors.frozenWater300 : AppColors.border,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(
-              color: isActive ? const Color(0xFF84CC16) : Colors.transparent,
+              color: isActive ? AppColors.frozenWater600 : Colors.transparent,
               width: 1,
             ),
           ),
@@ -391,7 +391,7 @@ class _ECGWavePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFDC2626)
+      ..color = AppColors.darkAmethyst600
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.8
       ..strokeCap = StrokeCap.round;

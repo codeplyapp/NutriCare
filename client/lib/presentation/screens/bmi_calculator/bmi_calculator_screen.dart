@@ -41,7 +41,7 @@ class _BMICalculatorScreenState extends ConsumerState<BMICalculatorScreen> {
     final bmiResult = nutritionState.bmiResult;
     final bmiVal = bmiResult?.bmiScore ?? 22.5;
 
-    Color categoryColor = AppColors.primaryHover;
+    Color categoryColor = AppColors.frozenWater800;
     Color categoryBgColor = AppColors.frozenWater50;
     Color categoryBorderColor = AppColors.frozenWater200;
     if (bmiResult != null) {
@@ -51,19 +51,19 @@ class _BMICalculatorScreenState extends ConsumerState<BMICalculatorScreen> {
         categoryBorderColor = AppColors.turquoise200;
       }
       if (bmiResult.categoryId == 'normal') {
-        categoryColor = AppColors.primaryHover;
+        categoryColor = AppColors.frozenWater800;
         categoryBgColor = AppColors.frozenWater50;
         categoryBorderColor = AppColors.frozenWater200;
       }
       if (bmiResult.categoryId == 'overweight') {
-        categoryColor = AppColors.warning;
-        categoryBgColor = const Color(0xFFFEF3C7);
-        categoryBorderColor = const Color(0xFFFDE68A);
+        categoryColor = AppColors.darkAmethyst700;
+        categoryBgColor = AppColors.darkAmethyst50;
+        categoryBorderColor = AppColors.darkAmethyst200;
       }
       if (bmiResult.categoryId == 'obese') {
-        categoryColor = AppColors.error;
-        categoryBgColor = const Color(0xFFFEE2E2);
-        categoryBorderColor = const Color(0xFFFECACA);
+        categoryColor = AppColors.richCerulean800;
+        categoryBgColor = AppColors.richCerulean50;
+        categoryBorderColor = AppColors.richCerulean200;
       }
     }
 
@@ -315,9 +315,9 @@ class _BMICalculatorScreenState extends ConsumerState<BMICalculatorScreen> {
                           Text('Klasifikasi BMI (Kemenkes / Asia-Pasifik)', style: AppTypography.captionStrong.copyWith(color: AppColors.textPrimary)),
                           const SizedBox(height: AppSpacing.xs),
                           const _BMIRangeRow(label: 'Berat Badan Kurang', range: '< 18.5', color: AppColors.turquoise700),
-                          const _BMIRangeRow(label: 'Normal (Ideal)', range: '18.5 – 22.9', color: AppColors.primaryHover),
-                          const _BMIRangeRow(label: 'Kelebihan Berat Badan', range: '23.0 – 24.9', color: AppColors.warning),
-                          const _BMIRangeRow(label: 'Obesitas', range: '≥ 25.0', color: AppColors.error),
+                          const _BMIRangeRow(label: 'Normal (Ideal)', range: '18.5 – 22.9', color: AppColors.frozenWater800),
+                          const _BMIRangeRow(label: 'Kelebihan Berat Badan', range: '23.0 – 24.9', color: AppColors.darkAmethyst700),
+                          const _BMIRangeRow(label: 'Obesitas', range: '≥ 25.0', color: AppColors.richCerulean800),
                         ],
                       ),
                     ),
@@ -346,7 +346,7 @@ class _DrNutriBMIAdviceCard extends StatelessWidget {
     String title = 'Catatan Klinis Dr. Nutri';
     String pose = 'assets/images/mascot/mascot_pointing.png';
     Color bg = AppColors.frozenWater50;
-    Color border = AppColors.frozenWater300;
+    Color border = AppColors.frozenWater200;
 
     if (categoryId == 'underweight') {
       title = 'Saran Nutrisi: Berat Kurang';
@@ -357,12 +357,17 @@ class _DrNutriBMIAdviceCard extends StatelessWidget {
       title = 'Saran Nutrisi: Kondisi Ideal';
       pose = 'assets/images/mascot/mascot_thumbs_up.png';
       bg = AppColors.frozenWater50;
-      border = AppColors.frozenWater300;
-    } else if (categoryId == 'overweight' || categoryId == 'obese') {
+      border = AppColors.frozenWater200;
+    } else if (categoryId == 'overweight') {
       title = 'Saran Nutrisi: Kontrol Kalori';
       pose = 'assets/images/mascot/mascot_pointing.png';
-      bg = const Color(0xFFFEF3C7);
-      border = const Color(0xFFFDE68A);
+      bg = AppColors.darkAmethyst50;
+      border = AppColors.darkAmethyst200;
+    } else {
+      title = 'Saran Nutrisi: Evaluasi Klinis';
+      pose = 'assets/images/mascot/mascot_presenting.png';
+      bg = AppColors.richCerulean50;
+      border = AppColors.richCerulean200;
     }
 
     return AppCard(

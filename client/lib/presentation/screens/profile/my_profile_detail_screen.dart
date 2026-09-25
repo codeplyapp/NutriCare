@@ -334,7 +334,7 @@ class _MyProfileDetailScreenState extends ConsumerState<MyProfileDetailScreen> {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2B90D4), // Solid Blue per mockup
+                          backgroundColor: AppColors.richCerulean500,
                           foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
@@ -445,7 +445,7 @@ class _CleanTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF2B90D4), width: 1.5),
+          borderSide: const BorderSide(color: AppColors.richCerulean500, width: 1.5),
         ),
       ),
     );
@@ -474,7 +474,7 @@ class _GenderSelectionCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFF2B90D4) : const Color(0xFFE2E8F0),
+            color: isSelected ? AppColors.richCerulean500 : const Color(0xFFE2E8F0),
             width: isSelected ? 1.5 : 1.2,
           ),
         ),
@@ -486,7 +486,7 @@ class _GenderSelectionCard extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? const Color(0xFF2B90D4) : const Color(0xFF94A3B8),
+                  color: isSelected ? AppColors.richCerulean500 : const Color(0xFF94A3B8),
                   width: 2,
                 ),
               ),
@@ -497,7 +497,7 @@ class _GenderSelectionCard extends StatelessWidget {
                         height: 8,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Color(0xFF2B90D4),
+                          color: AppColors.richCerulean500,
                         ),
                       ),
                     )

@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nutricare/core/theme/app_colors.dart';
-import 'package:nutricare/core/theme/app_motion.dart';
 import 'package:nutricare/core/theme/app_shapes.dart';
 import 'package:nutricare/core/theme/app_spacing.dart';
 import 'package:nutricare/core/theme/app_typography.dart';

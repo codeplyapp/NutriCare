@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutricare/core/theme/app_colors.dart';
-import 'package:nutricare/core/theme/app_shapes.dart';
-import 'package:nutricare/core/theme/app_spacing.dart';
 import 'package:nutricare/core/theme/app_typography.dart';
 import 'package:nutricare/presentation/widgets/app_switch.dart';
 import 'package:nutricare/presentation/widgets/fade_slide_entrance.dart';
@@ -45,8 +43,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   final List<_NotificationItemData> _notifications = const [
     _NotificationItemData(
       icon: Icons.medical_services_outlined,
-      iconColor: Color(0xFF2B90D4),
-      iconBg: Color(0xFFEAF4FB),
+      iconColor: AppColors.richCerulean500,
+      iconBg: AppColors.richCerulean50,
       title: 'Konsultasi Dokter Terjadwal',
       description: 'Sesi konsultasi dengan dr. Tirta Sp.GK dijadwalkan besok pukul 10.00 WIB.',
       timeAgo: '30m',
@@ -55,8 +53,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     ),
     _NotificationItemData(
       icon: Icons.water_drop_outlined,
-      iconColor: Color(0xFF009978),
-      iconBg: Color(0xFFE5FFF9),
+      iconColor: AppColors.frozenWater700,
+      iconBg: AppColors.frozenWater50,
       title: 'Target Hidrasi Tercapai! 💧',
       description: 'Selamat, Anda telah memenuhi target minum air mineral 2.000 ml hari ini.',
       timeAgo: '2h',
@@ -65,16 +63,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     ),
     _NotificationItemData(
       icon: Icons.receipt_long_outlined,
-      iconColor: Color(0xFF2B90D4),
-      iconBg: Color(0xFFEAF4FB),
+      iconColor: AppColors.richCerulean500,
+      iconBg: AppColors.richCerulean50,
       title: 'Pembayaran Konsultasi Terverifikasi',
       description: 'Kwitansi sesi dokter spesialis gizi klinik telah diterbitkan.',
       timeAgo: '1d',
     ),
     _NotificationItemData(
       icon: Icons.menu_book_outlined,
-      iconColor: Color(0xFF342178),
-      iconBg: Color(0xFFEEEBFA),
+      iconColor: AppColors.darkAmethyst700,
+      iconBg: AppColors.darkAmethyst50,
       title: 'Artikel Edukasi Baru untuk Anda',
       description: 'Panduan gizi seimbang & defisit kalori sehat menurut Kemenkes RI.',
       timeAgo: '2d',
@@ -82,8 +80,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     ),
     _NotificationItemData(
       icon: Icons.rate_review_outlined,
-      iconColor: Color(0xFF009978),
-      iconBg: Color(0xFFE5FFF9),
+      iconColor: AppColors.frozenWater700,
+      iconBg: AppColors.frozenWater50,
       title: 'Saatnya Beri Ulasan NutriCare',
       description: 'Bantu kami meningkatkan kualitas layanan dengan mengisi survei 1 menit.',
       timeAgo: '3d',

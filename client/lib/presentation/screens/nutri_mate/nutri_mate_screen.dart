@@ -85,13 +85,13 @@ class _NutriMateScreenState extends ConsumerState<NutriMateScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: AppColors.frozenWater100,
+                        color: AppColors.darkAmethyst100,
                         borderRadius: AppShapes.pill,
                       ),
                       child: Text(
                         'Dr. Nutri',
                         style: AppTypography.finePrint.copyWith(
-                          color: AppColors.frozenWater800,
+                          color: AppColors.darkAmethyst700,
                           fontWeight: FontWeight.w700,
                           fontSize: 10,
                         ),
@@ -154,12 +154,12 @@ class _NutriMateScreenState extends ConsumerState<NutriMateScreen> {
                                   label: Text(
                                     p,
                                     style: AppTypography.caption.copyWith(
-                                      color: AppColors.primaryHover,
+                                      color: AppColors.darkAmethyst800,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  backgroundColor: AppColors.frozenWater50,
-                                  side: const BorderSide(color: AppColors.frozenWater200),
+                                  backgroundColor: AppColors.darkAmethyst50,
+                                  side: const BorderSide(color: AppColors.darkAmethyst200),
                                   shape: AppShapes.pillShape(),
                                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                   onPressed: () => _sendMessage(p),
