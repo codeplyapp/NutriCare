@@ -15,13 +15,9 @@ class FirebaseAuthService {
     if (_customAuth != null) return _customAuth!;
     
     if (Firebase.apps.isEmpty) {
-      try {
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        );
-      } catch (e) {
-        debugPrint('Firebase.initializeApp in service: $e');
-      }
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
     }
     return FirebaseAuth.instance;
   }
