@@ -77,27 +77,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // Brand Logo
                     Center(
-                      child: Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: AppColors.frozenWater100,
-                          borderRadius: AppShapes.input,
-                        ),
-                        child: const Icon(Icons.person_add_alt_1_rounded, color: AppColors.frozenWater800, size: 32),
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        height: 100,
+                        fit: BoxFit.contain,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      'Daftar Akun NutriCare',
-                      textAlign: TextAlign.center,
-                      style: AppTypography.display.copyWith(
-                        color: AppColors.textPrimary,
-                        fontSize: 26,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xxs),
+                    const SizedBox(height: AppSpacing.sm),
                     Text(
                       'Mulai langkah pertama menuju pemenuhan gizi optimal Anda',
                       textAlign: TextAlign.center,

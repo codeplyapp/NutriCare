@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutricare/core/theme/app_colors.dart';
 import 'package:nutricare/core/theme/app_shapes.dart';
-import 'package:nutricare/core/theme/app_spacing.dart';
 import 'package:nutricare/core/theme/app_typography.dart';
 import 'package:nutricare/presentation/providers/auth_provider.dart';
 import 'package:nutricare/presentation/widgets/fade_slide_entrance.dart';
@@ -305,13 +304,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE5FFF9),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.eco_rounded, color: AppColors.primary, size: 20),
+            Image.asset(
+              'assets/images/logo.png',
+              height: 32,
+              fit: BoxFit.contain,
             ),
             const SizedBox(width: 10),
             Text(

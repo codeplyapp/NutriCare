@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutricare/core/theme/app_colors.dart';
-import 'package:nutricare/core/theme/app_motion.dart';
 import 'package:nutricare/core/theme/app_typography.dart';
 
 /// Tombol Kembali (Back Button) sesuai token spesifikasi DESIGN.md

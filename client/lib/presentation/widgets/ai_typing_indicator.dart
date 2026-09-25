@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nutricare/core/theme/app_colors.dart';
-import 'package:nutricare/core/theme/app_shapes.dart';
 import 'package:nutricare/core/theme/app_spacing.dart';
 import 'package:nutricare/core/theme/app_typography.dart';
 

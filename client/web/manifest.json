@@ -1,11 +1,11 @@
 {
-    "name": "nutricare",
-    "short_name": "nutricare",
+    "name": "NutriCare - Personal Nutrition & Health",
+    "short_name": "NutriCare",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#00CCA0",
+    "theme_color": "#00CCA0",
+    "description": "Platform Cerdas Manajemen Nutrisi, Edukasi Berkelanjutan, dan Telekonsultasi Dokter Spesialis Gizi Klinis.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

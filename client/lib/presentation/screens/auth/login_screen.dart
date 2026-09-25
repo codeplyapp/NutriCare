@@ -63,28 +63,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Brand Icon
+                    // Brand Logo
                     Center(
-                      child: Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: AppShapes.input,
-                        ),
-                        child: const Icon(Icons.favorite_rounded, color: AppColors.onPrimary, size: 32),
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        height: 110,
+                        fit: BoxFit.contain,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Text(
-                      'NutriCare',
-                      textAlign: TextAlign.center,
-                      style: AppTypography.display.copyWith(
-                        color: AppColors.textPrimary,
-                        fontSize: 28,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
+                    const SizedBox(height: AppSpacing.sm),
                     Text(
                       'Kecerdasan Gizi Personal & Pemantauan Sehat Harian',
                       textAlign: TextAlign.center,
