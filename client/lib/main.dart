@@ -13,9 +13,9 @@ void main() async {
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
-    ).timeout(const Duration(seconds: 4));
+    );
   } catch (e) {
-    debugPrint('Firebase initialization notice: $e');
+    debugPrint('Firebase.initializeApp in main: $e');
   }
 
   runApp(
