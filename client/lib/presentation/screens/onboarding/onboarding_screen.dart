@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nutricare/core/theme/app_colors.dart';
 import 'package:nutricare/core/theme/app_spacing.dart';
 import 'package:nutricare/core/theme/app_typography.dart';
+import 'package:nutricare/data/datasources/local_datasource.dart';
 
 /// Data model untuk setiap halaman onboarding
 class _OnboardingPageData {
@@ -163,6 +164,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   void _navigateToAuth() {
+    LocalDataSource().setHasSeenOnboarding(true);
     context.go('/auth');
   }
 

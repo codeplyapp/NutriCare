@@ -12,6 +12,7 @@ class LocalDataSource {
   static const _keyDraftTimestamp = 'draft_register_timestamp';
   static const _keyFailedAttempts = 'failed_login_attempts';
   static const _keyLockoutTimestamp = 'lockout_timestamp';
+  static const _keyHasSeenOnboarding = 'has_seen_onboarding';
 
   Future<void> saveAuthData({
     required String token,
@@ -61,6 +62,16 @@ class LocalDataSource {
   Future<void> setIsEmailVerified(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_keyEmailVerified, value);
+  }
+
+  Future<bool> getHasSeenOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyHasSeenOnboarding) ?? false;
+  }
+
+  Future<void> setHasSeenOnboarding(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyHasSeenOnboarding, value);
   }
 
   // Draft Registration Cache (TTL 30 Menit)
