@@ -11,6 +11,7 @@ class AppTextField extends StatelessWidget {
   final String? helperText;
   final IconData? prefixIcon;
   final Widget? suffixIcon;
+  final Widget? suffix;
   final bool obscureText;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
@@ -26,6 +27,7 @@ class AppTextField extends StatelessWidget {
     this.helperText,
     this.prefixIcon,
     this.suffixIcon,
+    this.suffix,
     this.obscureText = false,
     this.keyboardType,
     this.validator,
@@ -33,6 +35,8 @@ class AppTextField extends StatelessWidget {
     this.maxLines = 1,
     this.isSearch = false,
   });
+
+  Widget? get effectiveSuffix => suffix ?? suffixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +84,7 @@ class AppTextField extends StatelessWidget {
             prefixIcon: prefixIcon != null
                 ? Icon(prefixIcon, color: AppColors.inkMuted48, size: 18)
                 : null,
-            suffixIcon: suffixIcon,
+            suffixIcon: effectiveSuffix,
           ),
         ),
       ],

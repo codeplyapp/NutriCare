@@ -95,8 +95,10 @@ class AppColors {
   // Background, Surface, & Typography Netral
   static const Color bgPage = Color(0xFFFBFFFE);
   static const Color bgSurface = Color(0xFFFFFFFF);
+  static const Color bgSurfaceSecondary = Color(0xFFF7FBF9);
   static const Color textPrimary = Color(0xFF0B1210);
   static const Color textSecondary = Color(0xFF5C6663);
+  static const Color textTertiary = Color(0xFF8A9491);
   static const Color border = Color(0xFFE4E7E6);
   static const Color borderSubtle = frozenWater100;
 

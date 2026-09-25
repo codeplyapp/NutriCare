@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutricare/domain/entities/entities.dart';
 import 'package:nutricare/presentation/providers/auth_provider.dart';
-import 'package:nutricare/presentation/screens/auth/login_screen.dart';
-import 'package:nutricare/presentation/screens/auth/register_screen.dart';
+import 'package:nutricare/presentation/screens/auth/auth_screen.dart';
+import 'package:nutricare/presentation/screens/auth/email_verification_screen.dart';
+import 'package:nutricare/presentation/screens/auth/reverify_screen.dart';
 import 'package:nutricare/presentation/screens/onboarding_profile/onboarding_profile_screen.dart';
 import 'package:nutricare/presentation/screens/home_dashboard/home_dashboard_screen.dart';
 import 'package:nutricare/presentation/screens/nutri_mate/nutri_mate_screen.dart';
@@ -35,36 +36,72 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/dashboard',
     redirect: (context, state) {
       final isAuth = authState.isAuthenticated;
+      final isVerified = authState.isEmailVerified;
       final hasProfile = authState.hasProfile;
-      final loc = state.uri.toString();
+      final loc = state.uri.path;
 
-      final isLoggingIn = loc == '/login' || loc == '/register';
+      final isAuthRoute = loc == '/auth' || loc == '/login' || loc == '/register' || loc == '/reverify' || loc == '/email-verification';
 
+      // 1. Belum login sama sekali
       if (!isAuth) {
-        return isLoggingIn ? null : '/login';
+        return isAuthRoute ? null : '/auth';
       }
 
-      // If authenticated but hasn't completed nutrition profile onboarding (FR-1.1 Route Guard)
-      if (!hasProfile && loc != '/onboarding-profile') {
-        return '/onboarding-profile';
+      // 2. Sudah login tetapi email belum terverifikasi (khusus email/password)
+      if (!isVerified) {
+        if (loc == '/email-verification' || loc == '/reverify') {
+          return null;
+        }
+        return '/email-verification';
       }
 
-      if (isAuth && isLoggingIn) {
-        return hasProfile ? '/dashboard' : '/onboarding-profile';
+      // 3. Sudah terverifikasi tetapi belum mengisi profil gizi (FR-1.1 Route Guard)
+      if (!hasProfile) {
+        return loc == '/onboarding-profile' ? null : '/onboarding-profile';
+      }
+
+      // 4. Sudah terverifikasi dan sudah memiliki profil gizi -> jangan biarkan kembali ke layar auth
+      if (isAuth && isAuthRoute) {
+        return '/dashboard';
       }
 
       return null;
     },
     routes: [
       GoRoute(
+        path: '/auth',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final tabStr = state.uri.queryParameters['tab'];
+          final initialTab = tabStr == '1' || tabStr == 'register' ? 1 : 0;
+          return AuthScreen(initialTabIndex: initialTab);
+        },
+      ),
+      GoRoute(
         path: '/login',
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const LoginScreen(),
+        builder: (context, state) => const AuthScreen(initialTabIndex: 0),
       ),
       GoRoute(
         path: '/register',
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const RegisterScreen(),
+        builder: (context, state) => const AuthScreen(initialTabIndex: 1),
+      ),
+      GoRoute(
+        path: '/email-verification',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final email = state.uri.queryParameters['email'];
+          return EmailVerificationScreen(email: email);
+        },
+      ),
+      GoRoute(
+        path: '/reverify',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final email = state.uri.queryParameters['email'];
+          return ReverifyScreen(initialEmail: email);
+        },
       ),
       GoRoute(
         path: '/onboarding-profile',

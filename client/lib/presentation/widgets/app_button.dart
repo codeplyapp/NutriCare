@@ -19,7 +19,8 @@ enum AppButtonVariant {
 }
 
 class AppButton extends StatefulWidget {
-  final String text;
+  final String? text;
+  final String? label;
   final VoidCallback? onPressed;
   final AppButtonVariant variant;
   final IconData? icon;
@@ -29,14 +30,17 @@ class AppButton extends StatefulWidget {
 
   const AppButton({
     super.key,
-    required this.text,
+    this.text,
+    this.label,
     required this.onPressed,
     this.variant = AppButtonVariant.primary,
     this.icon,
     this.isLoading = false,
     this.width,
     this.height,
-  });
+  }) : assert(text != null || label != null, 'Either text or label must be provided');
+
+  String get buttonText => label ?? text ?? '';
 
   @override
   State<AppButton> createState() => _AppButtonState();
@@ -188,7 +192,7 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
                         const SizedBox(width: AppSpacing.xs),
                       ],
                       Text(
-                        widget.text,
+                        widget.buttonText,
                         style: textStyle.copyWith(
                           color: isEnabled ? textColor : AppColors.inkMuted48,
                         ),
