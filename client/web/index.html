@@ -32,9 +32,24 @@
   <title>NutriCare - Nutrisi Personal & Konsultasi Dokter</title>
   <link rel="manifest" href="manifest.json">
 </head>
+<body>
   <!-- Firebase JS SDK for Flutter Web -->
   <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAbq3O-djKPmpT2HSwvk7Dgq05u0ugLx9I",
+      authDomain: "nutricare-5cf9d.firebaseapp.com",
+      projectId: "nutricare-5cf9d",
+      storageBucket: "nutricare-5cf9d.firebasestorage.app",
+      messagingSenderId: "650630561254",
+      appId: "1:650630561254:web:fbc5688a1d73af8a37aa27",
+      measurementId: "G-C957HEN06F"
+    };
+    if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+  </script>
 
   <!--
     You can customize the "flutter_bootstrap.js" script.
