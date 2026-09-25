@@ -269,7 +269,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
                         // Google OAuth Button (At Top)
                         OutlinedButton(
-                          onPressed: isLockedOut ? null : _handleGoogleLogin,
+                          onPressed: (isLockedOut || authState.isLoading) ? null : _handleGoogleLogin,
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size(double.infinity, 48),
                             backgroundColor: Colors.white,
@@ -279,22 +279,28 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             ),
                             elevation: 0,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Google 'G' icon
-                              _buildGoogleIcon(),
-                              const SizedBox(width: 10),
-                              Text(
-                                _isLogin ? 'Lanjutkan dengan Google' : 'Daftar dengan Google',
-                                style: const TextStyle(
-                                  color: Color(0xFF1E293B),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                          child: authState.isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: _brandBlue),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Google 'G' icon
+                                    _buildGoogleIcon(),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      _isLogin ? 'Lanjutkan dengan Google' : 'Daftar dengan Google',
+                                      style: const TextStyle(
+                                        color: Color(0xFF1E293B),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
                         ),
                         const SizedBox(height: 20),
 

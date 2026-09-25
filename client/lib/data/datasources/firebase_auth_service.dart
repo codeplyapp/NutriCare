@@ -1,65 +1,58 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:nutricare/firebase_options.dart';
 import 'package:nutricare/domain/entities/entities.dart';
 
 /// Service wrapper untuk Firebase Authentication di NutriCare
 class FirebaseAuthService {
-  FirebaseAuth? _authInstance;
+  FirebaseAuth? _customAuth;
 
-  FirebaseAuthService({FirebaseAuth? auth}) : _authInstance = auth;
+  FirebaseAuthService({FirebaseAuth? auth}) : _customAuth = auth;
 
-  FirebaseAuth? get _auth {
-    if (_authInstance != null) return _authInstance;
-    try {
-      if (Firebase.apps.isNotEmpty) {
-        _authInstance = FirebaseAuth.instance;
-        return _authInstance;
+  /// Memastikan Firebase App terinisialisasi sebelum mengakses FirebaseAuth instance
+  Future<FirebaseAuth> _getAuth() async {
+    if (_customAuth != null) return _customAuth!;
+    
+    if (Firebase.apps.isEmpty) {
+      try {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      } catch (e) {
+        debugPrint('Firebase.initializeApp in service: $e');
       }
-    } catch (e) {
-      debugPrint('FirebaseAuth instance access notice: $e');
     }
-    return null;
+    return FirebaseAuth.instance;
   }
 
   User? get currentUser {
     try {
-      return _auth?.currentUser;
-    } catch (_) {
-      return null;
-    }
+      if (Firebase.apps.isNotEmpty) {
+        return (_customAuth ?? FirebaseAuth.instance).currentUser;
+      }
+    } catch (_) {}
+    return null;
   }
 
   Stream<User?> get authStateChanges {
     try {
-      final a = _auth;
-      if (a != null) {
-        return a.authStateChanges();
+      if (Firebase.apps.isNotEmpty) {
+        return (_customAuth ?? FirebaseAuth.instance).authStateChanges();
       }
     } catch (_) {}
     return const Stream.empty();
   }
 
-  /// Register dengan Email & Password
+  /// Register dengan Email & Password (Real Firebase Auth)
   Future<UserEntity> registerWithEmailPassword({
     required String name,
     required String email,
     required String password,
     String? phone,
   }) async {
-    final auth = _auth;
-    if (auth == null) {
-      // Fallback local jika Firebase belum terhubung
-      return UserEntity(
-        id: 'u-${DateTime.now().millisecondsSinceEpoch}',
-        name: name.trim(),
-        email: email.trim(),
-        phone: phone,
-        hasProfile: false,
-      );
-    }
-
     try {
+      final auth = await _getAuth();
       final credential = await auth.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password,
@@ -85,26 +78,17 @@ class FirebaseAuthService {
     } on FirebaseAuthException catch (e) {
       throw Exception(_mapFirebaseErrorMessage(e));
     } catch (e) {
-      throw Exception('Gagal melakukan pendaftaran: ${e.toString()}');
+      throw Exception('Gagal melakukan pendaftaran: ${e.toString().replaceFirst("Exception: ", "")}');
     }
   }
 
-  /// Login dengan Email & Password
+  /// Login dengan Email & Password (Real Firebase Auth)
   Future<UserEntity> loginWithEmailPassword({
     required String email,
     required String password,
   }) async {
-    final auth = _auth;
-    if (auth == null) {
-      return UserEntity(
-        id: 'u-${DateTime.now().millisecondsSinceEpoch}',
-        name: email.split('@')[0],
-        email: email.trim(),
-        hasProfile: false,
-      );
-    }
-
     try {
+      final auth = await _getAuth();
       final credential = await auth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password,
@@ -136,40 +120,35 @@ class FirebaseAuthService {
     }
   }
 
-  /// Login dengan Google OAuth (Pop-up Web & Mobile)
+  /// Login dengan Google OAuth Pop-up (Real Firebase Auth with Account Selector)
   Future<UserEntity> loginWithGoogle() async {
-    final auth = _auth;
-    if (auth == null) {
-      return UserEntity(
-        id: 'google-user-${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Pengguna Google NutriCare',
-        email: 'user@google.com',
-        hasProfile: false,
-      );
-    }
-
     try {
+      final auth = await _getAuth();
       final GoogleAuthProvider googleProvider = GoogleAuthProvider();
       googleProvider.addScope('email');
       googleProvider.addScope('profile');
+      // Memastikan popup selalu menampilkan pemilih akun Google
+      googleProvider.setCustomParameters({'prompt': 'select_account'});
 
-      final userCredential = await auth.signInWithPopup(googleProvider);
+      final UserCredential userCredential = await auth.signInWithPopup(googleProvider);
       final user = userCredential.user;
 
       if (user == null) {
-        throw Exception('Gagal mendapatkan data akun Google.');
+        throw Exception('Gagal mendapatkan informasi akun Google.');
       }
 
       return UserEntity(
         id: user.uid,
-        name: user.displayName ?? 'Pengguna Google',
+        name: user.displayName?.isNotEmpty == true
+            ? user.displayName!
+            : (user.email?.split('@')[0] ?? 'Pengguna Google'),
         email: user.email ?? '',
         hasProfile: false,
       );
     } on FirebaseAuthException catch (e) {
       throw Exception(_mapFirebaseErrorMessage(e));
     } catch (e) {
-      throw Exception('Gagal menghubungkan dengan Google: ${e.toString()}');
+      throw Exception('Gagal menghubungkan dengan Google: ${e.toString().replaceFirst("Exception: ", "")}');
     }
   }
 
@@ -203,16 +182,14 @@ class FirebaseAuthService {
 
   /// Reset Password via Email
   Future<bool> sendPasswordResetEmail(String email) async {
-    final auth = _auth;
-    if (auth == null) return true;
-
     try {
+      final auth = await _getAuth();
       await auth.sendPasswordResetEmail(email: email.trim());
       return true;
     } on FirebaseAuthException catch (e) {
       throw Exception(_mapFirebaseErrorMessage(e));
     } catch (e) {
-      throw Exception('Gagal mengirim email reset kata sandi: $e');
+      throw Exception('Gagal mengirim email reset kata sandi: ${e.toString().replaceFirst("Exception: ", "")}');
     }
   }
 
@@ -230,7 +207,8 @@ class FirebaseAuthService {
   /// Logout dari Firebase Auth
   Future<void> signOut() async {
     try {
-      await _auth?.signOut();
+      final auth = await _getAuth();
+      await auth.signOut();
     } catch (_) {}
   }
 
@@ -251,13 +229,15 @@ class FirebaseAuthService {
       case 'too-many-requests':
         return 'Terlalu banyak percobaan gagal. Silakan tunggu beberapa saat lagi.';
       case 'operation-not-allowed':
-        return 'Metode login ini belum diaktifkan di Firebase Console.';
+        return 'Metode login Google / Email belum diaktifkan di Firebase Console (Authentication > Sign-in method).';
       case 'weak-password':
         return 'Kata sandi terlalu lemah. Gunakan minimal 8 karakter dengan kombinasi kuat.';
       case 'popup-closed-by-user':
-        return 'Jendela masuk Google telah ditutup sebelum selesai.';
+        return 'Jendela masuk Google ditutup sebelum proses selesai.';
+      case 'popup-blocked':
+        return 'Jendela pop-up Google diblokir oleh browser. Harap izinkan pop-up untuk situs ini.';
       case 'unauthorized-domain':
-        return 'Domain web ini belum ditambahkan ke Authorized Domains di Firebase Console.';
+        return 'Domain ini belum diotorisasi di Firebase Console. Harap tambahkan domain di Authentication > Settings > Authorized domains.';
       case 'network-request-failed':
         return 'Koneksi internet bermasalah. Periksa jaringan Anda dan coba lagi.';
       default:
