@@ -87,7 +87,30 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
     }
 
-    if (token != null && userId != null) {
+    final fbUser = _repository.firebaseAuthService.currentUser;
+    if (fbUser != null) {
+      try {
+        await fbUser.reload();
+      } catch (_) {}
+      final refreshedUser = _repository.firebaseAuthService.currentUser ?? fbUser;
+      final currentVerified = refreshedUser.emailVerified;
+
+      state = state.copyWith(
+        isAuthenticated: true,
+        isEmailVerified: currentVerified,
+        hasProfile: hasProfile,
+        failedAttempts: failedAttempts,
+        lockoutUntil: lockoutUntil,
+        user: UserEntity(
+          id: refreshedUser.uid,
+          name: refreshedUser.displayName?.isNotEmpty == true
+              ? refreshedUser.displayName!
+              : (userName ?? 'Pengguna'),
+          email: refreshedUser.email ?? '',
+          hasProfile: hasProfile,
+        ),
+      );
+    } else if (token != null && userId != null) {
       state = state.copyWith(
         isAuthenticated: true,
         isEmailVerified: isEmailVerified,
@@ -121,16 +144,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final user = await _repository.login(email, password);
+      final isVerified = _repository.firebaseAuthService.currentUser?.emailVerified ?? true;
 
       // Reset lockout counter on success
       await _localDataSource.setFailedAttempts(0);
       await _localDataSource.setLockoutTimestamp(null);
-      await _localDataSource.setIsEmailVerified(true);
+      await _localDataSource.setIsEmailVerified(isVerified);
 
       state = state.copyWith(
         isLoading: false,
         isAuthenticated: true,
-        isEmailVerified: true,
+        isEmailVerified: isVerified,
         hasProfile: user.hasProfile,
         user: user,
         failedAttempts: 0,
@@ -195,28 +219,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<bool> loginWithGoogle() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      // Simulasi Google OAuth Login (terverifikasi otomatis)
-      final dummyGoogleUser = UserEntity(
-        id: 'google-user-${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Pengguna Google NutriCare',
-        email: 'user@google.com',
-        hasProfile: false,
-      );
-
-      await _localDataSource.saveAuthData(
-        token: 'mock-google-jwt-token',
-        userId: dummyGoogleUser.id,
-        userName: dummyGoogleUser.name,
-        hasProfile: false,
-        isEmailVerified: true,
-      );
+      final user = await _repository.loginWithGoogle();
 
       state = state.copyWith(
         isLoading: false,
         isAuthenticated: true,
         isEmailVerified: true,
-        hasProfile: false,
-        user: dummyGoogleUser,
+        hasProfile: user.hasProfile,
+        user: user,
         failedAttempts: 0,
         clearLockout: true,
       );
@@ -224,7 +234,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Gagal menghubungkan dengan Google: $e',
+        errorMessage: e.toString().replaceFirst('Exception: ', ''),
       );
       return false;
     }
@@ -232,9 +242,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<bool> sendVerificationEmail(String email) async {
     try {
-      // Simulate/Trigger sending verification email
-      await Future.delayed(const Duration(milliseconds: 600));
-      return true;
+      return await _repository.sendVerificationEmail();
     } catch (e) {
       return false;
     }
@@ -242,12 +250,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<bool> checkEmailVerification(String email) async {
     try {
-      // Simulate verification polling check
-      await Future.delayed(const Duration(milliseconds: 500));
-      // Mark verified
-      await _localDataSource.setIsEmailVerified(true);
-      state = state.copyWith(isEmailVerified: true);
-      return true;
+      final isVerified = await _repository.checkEmailVerification();
+      if (isVerified) {
+        await _localDataSource.setIsEmailVerified(true);
+        state = state.copyWith(isEmailVerified: true);
+      }
+      return isVerified;
     } catch (e) {
       return false;
     }
@@ -255,10 +263,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<bool> sendPasswordReset(String email) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 600));
-      return true;
+      return await _repository.sendPasswordReset(email);
     } catch (e) {
-      return false;
+      rethrow;
     }
   }
 

@@ -1,100 +1,158 @@
 import 'package:nutricare/core/constants/api_constants.dart';
 import 'package:nutricare/data/datasources/api_client.dart';
+import 'package:nutricare/data/datasources/firebase_auth_service.dart';
 import 'package:nutricare/data/datasources/local_datasource.dart';
 import 'package:nutricare/domain/entities/entities.dart';
 
 class NutriCareRepositoryImpl {
   final ApiClient _apiClient;
   final LocalDataSource _localDataSource;
+  final FirebaseAuthService _firebaseAuthService;
 
   NutriCareRepositoryImpl({
     ApiClient? apiClient,
     LocalDataSource? localDataSource,
+    FirebaseAuthService? firebaseAuthService,
   })  : _apiClient = apiClient ?? ApiClient(),
-        _localDataSource = localDataSource ?? LocalDataSource();
+        _localDataSource = localDataSource ?? LocalDataSource(),
+        _firebaseAuthService = firebaseAuthService ?? FirebaseAuthService();
+
+  FirebaseAuthService get firebaseAuthService => _firebaseAuthService;
 
   Future<UserEntity> login(String email, String password) async {
+    // 1. Authenticate with Firebase Auth
+    final firebaseUser = await _firebaseAuthService.loginWithEmailPassword(
+      email: email,
+      password: password,
+    );
+
+    final idToken = await _firebaseAuthService.getIdToken() ?? 'firebase-auth-token';
+    final isEmailVerified = _firebaseAuthService.currentUser?.emailVerified ?? false;
+
+    // 2. Sync with Backend API if available
+    bool hasProfile = false;
     try {
       final res = await _apiClient.post(ApiConstants.login, {
         'email': email,
         'password': password,
       });
-
-      final user = UserEntity(
-        id: res['user_id'] ?? 'user-1',
-        name: res['name'] ?? 'Pengguna',
-        email: res['email'] ?? email,
-        hasProfile: res['has_nutrition_profile'] ?? false,
-      );
-
-      await _localDataSource.saveAuthData(
-        token: res['access_token'] ?? 'mock-token',
-        userId: user.id,
-        userName: user.name,
-        hasProfile: user.hasProfile,
-      );
-
-      return user;
-    } catch (e) {
-      // Fallback for demonstration / local testing
-      final user = UserEntity(
-        id: 'u-local-1',
-        name: email.split('@')[0],
-        email: email,
-        hasProfile: false,
-      );
-      await _localDataSource.saveAuthData(
-        token: 'mock-token-fallback',
-        userId: user.id,
-        userName: user.name,
-        hasProfile: false,
-      );
-      return user;
+      hasProfile = res['has_nutrition_profile'] ?? false;
+    } catch (_) {
+      // Backend sync fallback
+      hasProfile = await _localDataSource.getHasProfile();
     }
+
+    final user = UserEntity(
+      id: firebaseUser.id,
+      name: firebaseUser.name.isNotEmpty ? firebaseUser.name : (email.split('@')[0]),
+      email: firebaseUser.email.isNotEmpty ? firebaseUser.email : email,
+      hasProfile: hasProfile,
+    );
+
+    await _localDataSource.saveAuthData(
+      token: idToken,
+      userId: user.id,
+      userName: user.name,
+      hasProfile: user.hasProfile,
+      isEmailVerified: isEmailVerified,
+    );
+
+    return user;
   }
 
   Future<UserEntity> register(String name, String email, String password, String? phone, bool consent) async {
+    // 1. Register with Firebase Auth & send verification email
+    final firebaseUser = await _firebaseAuthService.registerWithEmailPassword(
+      name: name,
+      email: email,
+      password: password,
+      phone: phone,
+    );
+
+    final idToken = await _firebaseAuthService.getIdToken() ?? 'firebase-auth-token';
+
+    // 2. Sync with Backend API if available
     try {
-      final res = await _apiClient.post(ApiConstants.register, {
+      await _apiClient.post(ApiConstants.register, {
         'name': name,
         'email': email,
         'password': password,
         'phone': phone,
         'pdp_consent_given': consent,
+        'firebase_uid': firebaseUser.id,
       });
-
-      final user = UserEntity(
-        id: res['user_id'] ?? 'user-1',
-        name: res['name'] ?? name,
-        email: res['email'] ?? email,
-        phone: phone,
-        hasProfile: false,
-      );
-
-      await _localDataSource.saveAuthData(
-        token: res['access_token'] ?? 'mock-token',
-        userId: user.id,
-        userName: user.name,
-        hasProfile: false,
-      );
-
-      return user;
-    } catch (e) {
-      final user = UserEntity(
-        id: 'u-local-1',
-        name: name,
-        email: email,
-        phone: phone,
-        hasProfile: false,
-      );
-      await _localDataSource.saveAuthData(
-        token: 'mock-token-fallback',
-        userId: user.id,
-        userName: user.name,
-        hasProfile: false,
-      );
-      return user;
+    } catch (_) {
+      // Backend sync fallback
     }
+
+    final user = UserEntity(
+      id: firebaseUser.id,
+      name: name,
+      email: email,
+      phone: phone,
+      hasProfile: false,
+    );
+
+    await _localDataSource.saveAuthData(
+      token: idToken,
+      userId: user.id,
+      userName: user.name,
+      hasProfile: false,
+      isEmailVerified: false,
+    );
+
+    return user;
+  }
+
+  Future<UserEntity> loginWithGoogle() async {
+    final firebaseUser = await _firebaseAuthService.loginWithGoogle();
+    final idToken = await _firebaseAuthService.getIdToken() ?? 'firebase-google-token';
+
+    bool hasProfile = false;
+    try {
+      final res = await _apiClient.post(ApiConstants.login, {
+        'email': firebaseUser.email,
+        'is_google': true,
+        'firebase_uid': firebaseUser.id,
+      });
+      hasProfile = res['has_nutrition_profile'] ?? false;
+    } catch (_) {
+      hasProfile = await _localDataSource.getHasProfile();
+    }
+
+    final user = UserEntity(
+      id: firebaseUser.id,
+      name: firebaseUser.name,
+      email: firebaseUser.email,
+      hasProfile: hasProfile,
+    );
+
+    await _localDataSource.saveAuthData(
+      token: idToken,
+      userId: user.id,
+      userName: user.name,
+      hasProfile: user.hasProfile,
+      isEmailVerified: true,
+    );
+
+    return user;
+  }
+
+  Future<bool> sendVerificationEmail() async {
+    return await _firebaseAuthService.sendVerificationEmail();
+  }
+
+  Future<bool> checkEmailVerification() async {
+    return await _firebaseAuthService.checkEmailVerification();
+  }
+
+  Future<bool> sendPasswordReset(String email) async {
+    return await _firebaseAuthService.sendPasswordResetEmail(email);
+  }
+
+  Future<void> logout() async {
+    await _firebaseAuthService.signOut();
+    await _localDataSource.clearAuth();
   }
 
   Future<NutritionProfileEntity> saveProfile({
