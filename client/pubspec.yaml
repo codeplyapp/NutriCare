@@ -30,4 +30,5 @@ flutter:
   assets:
     - assets/images/
     - assets/images/mascot/
+    - assets/images/onboarding/
 
