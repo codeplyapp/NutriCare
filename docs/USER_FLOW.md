@@ -1,24 +1,65 @@
 # User Flow — NutriCare
 
-**Versi:** 1.0
-**Terkait:** PRD.md, TSD.md, ARCHITECTURE.md
+**Versi:** 1.1
+**Terkait:** PRD.md, TSD.md, ARCHITECTURE.md, ADAPTASI_SIGAP.md
 
 ---
 
-## 1. Flow Onboarding & Registrasi
+## 1. Flow Onboarding, Autentikasi & Registrasi
 
 ```mermaid
 flowchart TD
-    A[Buka App] --> B{Sudah punya akun?}
-    B -->|Tidak| C[Daftar: Email/HP atau Google/Apple]
-    B -->|Ya| D[Login]
-    C --> E[Verifikasi Akun]
-    E --> F[Form Profil Gizi:\nNama, Umur, Tinggi, Berat, Aktivitas]
-    D --> G{Profil gizi sudah diisi?}
-    G -->|Belum| F
-    G -->|Sudah| H[Dashboard Utama]
-    F --> I[Sistem Hitung Target Gizi Harian]
-    I --> H
+    START([Buka Aplikasi / Splash]) --> ONBOARD[Onboarding Intro & Edukasi]
+    ONBOARD --> AUTH[Layar Autentikasi / AuthScreen]
+
+    subgraph AuthScreen["Layar Auth (Single Card / Tab Toggle)"]
+        AUTH --> TAB_LOGIN[Tab Masuk]
+        AUTH --> TAB_REGISTER[Tab Daftar]
+    end
+
+    %% Flow Masuk (Login)
+    TAB_LOGIN --> METHOD_LOGIN{Pilihan Masuk}
+    METHOD_LOGIN -->|Google OAuth| GOOGLE_AUTH[Login via Google\nOtomatis Terverifikasi]
+    METHOD_LOGIN -->|Lupa Kata Sandi| FORGOT[Modal Lupa Kata Sandi\nInput Email Terdaftar]
+    FORGOT --> SEND_RESET[Kirim Tautan Reset Password]
+    SEND_RESET --> TAB_LOGIN
+
+    METHOD_LOGIN -->|Email & Kata Sandi| SUBMIT_LOGIN[Submit Kredensial]
+    SUBMIT_LOGIN --> CHECK_ATTEMPT{Gagal 5x?}
+    CHECK_ATTEMPT -->|Ya| LOCKOUT[Banner Lockout Brute-Force\nTerkunci 5 Menit + Countdown]
+    LOCKOUT --> TAB_LOGIN
+    CHECK_ATTEMPT -->|Tidak| CHECK_VERIFIED{Email sudah\nterverifikasi?}
+    
+    CHECK_VERIFIED -->|Belum| REVERIFY[Layar Verifikasi Ulang / ReverifyScreen]
+    REVERIFY --> RESEND_LINK[Kirim Ulang Tautan Aktivasi]
+    RESEND_LINK --> VERIF_SCREEN[Layar Verifikasi Email / EmailVerificationScreen]
+
+    %% Flow Daftar (Register)
+    TAB_REGISTER --> FORM_REG[Isi: Nama, Email, Sandi 5 Kriteria,\nKonfirmasi Sandi, Checkbox UU PDP]
+    FORM_REG -. Simpan Sementara .-> DRAFT[Draft Local Cache\nTTL 30 Menit]
+    FORM_REG --> SUBMIT_REG[Submit Pendaftaran]
+    SUBMIT_REG --> SEND_VERIF[Backend Kirim Email Verifikasi]
+    SEND_VERIF --> VERIF_SCREEN
+
+    %% Layar Verifikasi Email
+    subgraph EmailVerif["Layar Verifikasi Email"]
+        VERIF_SCREEN --> OPEN_MAIL[Pintas: Buka Aplikasi Email\nDeteksi Gmail/Yahoo/Outlook]
+        VERIF_SCREEN --> AUTO_DETECT[Polling Auto-detect Tiap 3.5s]
+        VERIF_SCREEN --> COOLDOWN[Kirim Ulang Email\nCooldown 60s]
+    end
+
+    AUTO_DETECT --> VERIFIED_SUCCESS{Verifikasi\nBerhasil?}
+    OPEN_MAIL -. Pengguna Klik Link di Email .-> AUTO_DETECT
+    VERIFIED_SUCCESS -->|Ya| GATE_PROFILE
+    CHECK_VERIFIED -->|Ya| GATE_PROFILE
+    GOOGLE_AUTH --> GATE_PROFILE
+
+    %% Gate Profil Gizi
+    GATE_PROFILE{Profil Gizi\nSudah Lengkap?}
+    GATE_PROFILE -->|Belum| FORM_PROFILE[Form Profil Gizi Wajib:\nUsia, Gender, TB, BB, Tingkat Aktivitas]
+    FORM_PROFILE --> CALC[Sistem Hitung Target Gizi Harian\nFormula Mifflin-St Jeor]
+    CALC --> MAIN_DASHBOARD([Dashboard Utama NutriCare])
+    GATE_PROFILE -->|Sudah| MAIN_DASHBOARD
 ```
 
 ## 2. Flow Nutri Mate (Chat AI)

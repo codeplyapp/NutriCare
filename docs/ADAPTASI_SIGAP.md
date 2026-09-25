@@ -20,33 +20,31 @@ yang dapat diadaptasi ke **NutriCare**. Kedua proyek berbagi `docs/DESIGN.md`
 - Semua elemen visual disaring lewat aturan `docs/DESIGN.md` + brand palette
   (`docs/AGENTS.md`) sebelum masuk sebagai token Flutter di `docs/LIB_THEME.md`.
 
-**Aturan filter wajib (tidak boleh dilanggar saat adaptasi):**
-- **Tanpa gradien dekoratif.** SIGAP memakai banyak `linear-gradient`; di
-  NutriCare diganti surface flat + pergantian tile terang/gelap (seperti
-  DESIGN.md).
-- **Shadow hanya untuk imagery.** Shadow kartu/tombol SIGAP dihapus; elevasi
-  via hairline border + pergantian surface.
-- **Satu aksen.** Aksen biru SIGAP `#0077c0` dipetakan ke skala brand
-  **rich-cerulean** (primary = `rich-cerulean-600` `#2373a9`); variasi warna
-  lain (emerald/amber SIGAP) hanya sebagai token semantik sukses/peringatan
-  yang sudah terdefinisi, bukan aksen brand kedua.
-- **Tipografi body 17px**, ladder 300/400/600/700 (tanpa 500), pakai token
-  `{typography.*}` — bukan ukuran web 12–13px SIGAP.
-- **Motion GPU-only** (`Transform` & `Opacity`), durasi via `AppMotion`
-  (150/250/300/700ms), dan wajib mematuhi reduce-motion (0ms). Confetti/glow
-  SIGAP disederhanakan menjadi opacity/scale tanpa gradien.
+**Aturan filter wajib & hal yang tidak diadaptasi:**
+- **Role picker (pelajar/mahasiswa/orang tua) TIDAK diadaptasi.** Di NutriCare seluruh pengguna terdaftar dengan role default `user`, dan proses segmentasi digantikan sepenuhnya oleh **pengisian data profil gizi personal** (antropometri & aktivitas fisik).
+- **Tanpa efek suara (sound).** Efek suara interaksi tombol/game di SIGAP ditiadakan.
+- **Tanpa gradien dekoratif.** SIGAP memakai banyak `linear-gradient`; di NutriCare diganti surface flat + pergantian tile terang/gelap (seperti DESIGN.md).
+- **Shadow hanya untuk imagery.** Shadow kartu/tombol SIGAP dihapus; elevasi via hairline border + pergantian surface.
+- **Satu aksen brand palette.** Aksen biru SIGAP `#0077c0` dipetakan ke skala brand resmi **rich-cerulean** (primary = `rich-cerulean-600` `#2373a9`); variasi warna frozen-water (mint) dan dark-amethyst (purple) digunakan sesuai konteks semantik/kategori, tanpa dekorasi gradien acak.
+- **Tipografi body 17px**, ladder 300/400/600/700 (tanpa 500), pakai token `{typography.*}` — bukan ukuran web 12–13px SIGAP.
+- **Motion GPU-only** (`Transform` & `Opacity`), durasi via `AppMotion` (150/250/300/700ms), dan wajib mematuhi reduce-motion (0ms). Confetti/glow SIGAP disederhanakan menjadi opacity/scale tanpa gradien.
 
 ---
 
 ## 2. Peta Adaptasi
 
-### 2.1 Pra-Otorisasi & Onboarding — Fase: MVP, Beranda/`BerandaView`
+### 2.1 Pra-Otorisasi & Onboarding — Fase: MVP, Auth & Onboarding
 
 | Elemen SIGAP | File sumber | Adaptasi NutriCare |
 |---|---|---|
-| State machine `splash → onboarding → auth → email_verification → reverify → complete_profile → app` | `demo-lantas/src/App.tsx` | Alur on-ramp NutriCare: Splash → Onboarding → Auth → verifikasi email → **profil gizi (wajib)** → app. Menjadi acuan untuk route-guard TSD §4.2. |
-| `CompleteProfileRouter` (multi-step form, gate setelah auth) | `features/auth/` | Form berlangkah profil gizi (data antropometri + aktivitas) yang menghitung target gizi sebelum masuk app. |
-| `OnboardingScreen` (parallax FX, partikel, slides) | `features/onboarding/` | Onboarding intro (brand + manfaat + privacy consent UU PDP). Parallax/partikel **hanya via opacity/transform** (tanpa gradien), hormati reduce-motion. |
+| State machine `splash → onboarding → auth → email_verification → reverify → complete_profile → app` | `demo-lantas/src/App.tsx` | Alur on-ramp NutriCare: Splash → Onboarding → Auth → Verifikasi Email → **Profil Gizi (wajib)** → App. Menjadi acuan rantai route-guard TSD §4.2. |
+| `AuthScreen` (Single Card, Tab Toggle Masuk & Daftar, Lupa Sandi modal, Lockout banner, Google OAuth) | `demo-lantas/src/features/auth/AuthScreen.tsx` | `presentation/screens/auth/auth_screen.dart` — Kartu auth tunggal dengan tab toggle Masuk (email, sandi show/hide, forgot password sheet, Google OAuth, banner lockout 5×/5m) dan Daftar (nama, email, sandi + strength meter 5 kriteria, konfirmasi, consent UU PDP). |
+| `EmailVerificationScreen` (3 langkah instruksi, Smart Open Mail App, Auto-detect 3.5s, Cooldown 60s, Spam hint) | `demo-lantas/src/features/auth/EmailVerificationScreen.tsx` | `presentation/screens/auth/email_verification_screen.dart` — Layar edukasi verifikasi 3 langkah, deteksi pintar domain email (Gmail, Yahoo, Outlook, Mail app default), polling status verifikasi setiap 3,5 detik, cooldown kirim ulang 60 detik, dan petunjuk folder spam. |
+| `ReverifyScreen` (Kirim ulang verifikasi bagi login tertolak) | `demo-lantas/src/features/auth/ReverifyScreen.tsx` | `presentation/screens/auth/reverify_screen.dart` — Layar khusus untuk menangani percobaan masuk yang gagal karena email belum aktif, dengan input email dan tombol kirim ulang tautan aktivasi. |
+| `passwordPolicy.ts` (Evaluasi 5 kriteria kata sandi) | `demo-lantas/src/features/auth/passwordPolicy.ts` | `core/utils/password_policy.dart` — Validasi 5 kriteria wajib (min. 8 karakter, huruf besar, huruf kecil, angka, simbol) + visual strength meter bar (lemah, sedang, kuat, sangat kuat). |
+| `services/auth.ts` (Behavior, lockout counter, draft restore TTL 30m, friendly errors) | `demo-lantas/src/services/auth.ts` | `data/datasources/auth_remote_datasource.dart` & `presentation/providers/auth_provider.dart` — Logika keamanan brute force (5x salah → lockout 5 menit), pemulihan draft formulir pendaftaran lokal (TTL 30 menit), error messaging ramah Bahasa Indonesia, dan session caching. |
+| `CompleteProfileRouter` (Multi-step form onboarding setelah auth) | `demo-lantas/src/features/auth/CompleteProfileRouter.tsx` | `presentation/screens/onboarding_profile/` — Form berlangkah profil gizi (data antropometri: usia, gender, TB, BB + tingkat aktivitas fisik) yang menghitung target gizi harian Mifflin-St Jeor sebelum mengizinkan masuk ke dashboard utama. *(Role picker pelajar/ortu SIGAP ditiadakan)*. |
+| `OnboardingScreen` (Parallax FX, partikel, intro slides) | `demo-lantas/src/features/onboarding/OnboardingScreen.tsx` | `presentation/screens/onboarding/` — Onboarding intro (brand + manfaat + consent UU PDP). Parallax/partikel **hanya via opacity/transform** (tanpa gradien), hormati reduce-motion. |
 
 ### 2.2 Navigasi: Dock Floating & Back — Fase: MVP
 

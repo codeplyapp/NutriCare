@@ -52,3 +52,7 @@ The app's actual brand colors are these four scales (Tailwind-style 50–950). T
 - Every Nutri Mate (Gemini) response carries an educational disclaimer; if a serious/risky condition is detected, escalate to Nutri Doc with a booking CTA.
 - AI Gateway builds the prompt (system + user gizi context + short history), rate-limits per user, caches FAQs.
 - Health data must comply with Indonesian UU PDP: explicit consent at registration, delete rights, encryption at-rest, audit log for medical/consultation access.
+- **Autentikasi & Verifikasi Wajib**: Verifikasi email wajib dilakukan sebelum pengguna dapat mengakses fitur aplikasi (login diblokir dan diarahkan ke alur verifikasi/reverify bila belum aktif). Akun via Google OAuth terverifikasi secara otomatis.
+- **Kebijakan Kata Sandi 5 Kriteria**: Pendaftaran akun wajib memenuhi 5 kriteria kekuatan sandi (min 8 karakter, huruf besar, huruf kecil, angka, simbol khusus) dengan indikator visual strength meter.
+- **Proteksi Brute-Force Lockout**: 5 kali kegagalan login berturut-turut memicu penguncian sementara (*lockout*) selama 5 menit disertai banner countdown waktu tunggu.
+- **Role Pengguna Default**: Seluruh akun umum menggunakan role default `user`; segmentasi pelajar/mahasiswa/orang tua SIGAP tidak digunakan dan digantikan sepenuhnya oleh pengisian formulir profil gizi personal (antropometri & aktivitas).

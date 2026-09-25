@@ -1,6 +1,6 @@
 # Technical Specification Document (TSD) — NutriCare
 
-**Versi:** 1.1
+**Versi:** 1.2
 **Terkait:** PRD.md, ARCHITECTURE.md, USER_FLOW.md, ADAPTASI_SIGAP.md
 
 ---
@@ -15,18 +15,18 @@ NutriCare dibangun dengan **Flutter** sebagai satu basis kode untuk Android, iOS
 |---|---|---|
 | Frontend (App + Web) | Flutter 3.x | Satu codebase → Android, iOS, Web |
 | State Management | Riverpod | Skalabel, testable, cocok lintas platform |
-| Routing | go_router | Mendukung deep link & guard route (mis. wajib isi profil) |
+| Routing | go_router | Mendukung deep link & rantai guard route (Auth → Verifikasi → Profil Gizi) |
 | Backend API | FastAPI (Python) *atau* NestJS (Node.js/TypeScript) | REST cepat dibangun, dokumentasi OpenAPI otomatis (FastAPI) |
 | Database utama | PostgreSQL | Data relasional terstruktur (profil, booking, log gizi) |
-| Cache | Redis | Cache target gizi & artikel populer |
+| Cache | Redis | Cache target gizi, session rate-limit, & artikel populer |
 | Realtime & IoT | MQTT broker (mis. EMQX/HiveMQ) | Komunikasi dua arah dengan jam tangan pintar |
 | Notifikasi | Firebase Cloud Messaging (FCM) | Push notification ke app & relay ke perangkat |
 | AI | Google Gemini API | Nutri Mate chatbot |
-| Auth | Firebase Authentication | Email/HP, OAuth Google/Apple, verifikasi token di backend |
+| Auth | Firebase Authentication / Backend Auth | Email/Password, Google OAuth (Apple = Fase berikutnya), verifikasi email wajib |
 | Storage konten | Firebase Storage / object storage kompatibel S3 | Artikel, gambar, video edukasi |
 | Video/Voice Call | Agora.io atau Twilio Video | Sesi Konsultasi Nutri Doc |
 | Hosting Backend | Google Cloud Run (atau Railway/Render untuk tahap awal) | Container scalable, bayar sesuai pemakaian |
-| Hosting Web | Firebase Hosting | CDN cepat, terintegrasi dengan Firebase |
+| Hosting Web | Firebase Hosting / Vercel | CDN cepat, terintegrasi PWA |
 | CI/CD | GitHub Actions | Build & deploy otomatis app (apk/aab/ipa) + web + backend |
 | Monitoring | Sentry (error) + Google Cloud Logging | Observability |
 
@@ -102,7 +102,7 @@ graph TB
 
 ```
 lib/
-├── core/                 # constants, theme, error handling, utils
+├── core/                 # constants, theme, error handling, utils, password_policy
 ├── data/
 │   ├── models/           # DTO / model JSON
 │   ├── repositories/     # implementasi repository
@@ -114,6 +114,10 @@ lib/
 ├── presentation/
 │   ├── screens/
 │   │   ├── auth/
+│   │   │   ├── auth_screen.dart               # Login & Register single card (tab toggle) + banner lockout
+│   │   │   ├── email_verification_screen.dart # Verifikasi email 3 langkah + smart open email app
+│   │   │   ├── reverify_screen.dart            # Verifikasi ulang saat login gagal belum aktif
+│   │   │   └── forgot_password_sheet.dart      # Modal bottom sheet reset kata sandi via email
 │   │   ├── onboarding_profile/
 │   │   ├── home_dashboard/
 │   │   ├── nutri_mate/
@@ -121,23 +125,26 @@ lib/
 │   │   ├── meal_planner/      # Nutri Meal
 │   │   ├── bmi_calculator/    # Nutri Calculator
 │   │   ├── health_education/  # Nutri Education
-│   │   └── profil/            # Profil pengguna (diakses dari Beranda/itik via header,
-│   │                          #   bukan tab di dock)
+│   │   └── profil/            # Profil pengguna (diakses dari Beranda)
 │   ├── widgets/
-│   └── providers/        # Riverpod providers per fitur
-├── routing/               # go_router configuration + route guard
+│   └── providers/        # Riverpod providers per fitur (auth_provider, nutrition_provider, dll)
+├── routing/               # go_router configuration + route guard rantai
 └── main.dart
 ```
 
 ### 4.2 Prinsip Desain
 - **Clean Architecture** (data–domain–presentation) agar logika bisnis terlepas dari UI dan mudah diuji.
 - **Riverpod** untuk state management lintas platform (mobile & web memakai provider yang sama).
-- **Route guard**: pengguna yang belum mengisi profil gizi diarahkan paksa ke layar registrasi profil.
+- **Rantai Route Guard & State Machine**: Alur navigasi pra-otorisasi hingga dashboard diatur oleh state machine: `splash → onboarding → auth → email_verification → reverify → complete_profile → app`. Route guard `go_router` secara ketat memvalidasi:
+  1. Pengguna belum terautentikasi → diarahkan ke `/auth`.
+  2. Pengguna terdaftar via email/password tetapi belum diverifikasi → diarahkan ke `/email-verification` atau `/reverify`.
+  3. Pengguna telah terverifikasi tetapi belum melengkapi profil gizi awal → diarahkan paksa ke `/onboarding-profile`.
+  4. Pengguna terverifikasi dan telah memiliki profil gizi → diberikan akses ke `/` (Dashboard utama).
 - **Navigasi Shell & Dock Floating**: Shell utama aplikasi menggunakan `go_router` dengan `StatefulShellRoute.indexedStack` untuk mengelola 4 tab utama pasca-onboarding (**Beranda**, **Nutri Mate**, **Nutri Meal**, **Nutri Doc**) yang menampilkan floating frosted `AppDock`. Profil, Nutri Calculator, dan Nutri Education diakses dari dalam Beranda tanpa tab terpisah di dock. Halaman detail/sub-halaman (seperti artikel detail, booking konsultasi, riwayat chat mendalam) di-push ke root navigator (`parentNavigatorKey`), sehingga menutupi dock (dock tidak tampil di halaman detail). Tombol back di pojok kiri atas muncul otomatis pada halaman non-root berdasarkan `Navigator.canPop(context)`.
 - **Transisi Navigasi & CustomTransitionPage**: Pergantian halaman detail menggunakan `CustomTransitionPage` pada routing `go_router` dengan efek slide + fade 300ms yang konsisten dan berbalik arah saat kembali (pop).
 - **Sistem Animasi & Motion (AppMotion)**: Animasi antarmuka halus bergaya Apple diatur via konstanta `AppMotion` (`lib/core/theme/app_motion.dart`) dengan durasi pendek (mikro-interaksi 150ms, transisi layar 300ms, data sweep 700ms) dan dibatasi pada properti GPU (`Transform` & `Opacity`). Wajib mematuhi preferensi *reduced-motion* pengguna melalui `MediaQuery.disableAnimationsOf(context)` (durasi 0ms/instant).
 - **Responsive layout**: `LayoutBuilder`/breakpoint khusus web agar dashboard, chat, dan Nutri Meal nyaman di layar lebar.
-- **Local cache** (Hive/SharedPreferences) untuk profil & sesi agar app tetap responsif saat offline sebentar.
+- **Local cache** (Hive/SharedPreferences) untuk profil, draft registrasi (TTL 30 menit), & sesi agar app tetap responsif saat offline sebentar.
 
 ## 5. Arsitektur Backend
 
@@ -145,7 +152,7 @@ lib/
 Dimulai sebagai monolith modular (mudah dikembangkan tim kecil), dengan batas modul yang jelas agar bisa dipecah menjadi microservices saat skala membesar.
 
 **Modul:**
-- **User & Profile Service** — registrasi, profil, autentikasi lanjutan, gamifikasi privat (streak, poin, pencapaian)
+- **User & Profile Service** — registrasi, profil, autentikasi lanjutan, lockout counter, gamifikasi privat (streak, poin, pencapaian)
 - **Nutrition Engine** — hitung target gizi harian, Nutri Calculator (BMI)
 - **AI Gateway Service** — proxy ke Gemini, prompt engineering, guardrail, rate limiting (Nutri Mate)
 - **Consultation Service** — booking, chat, generate token video call (Nutri Doc)
@@ -157,7 +164,10 @@ Dimulai sebagai monolith modular (mudah dikembangkan tim kecil), dengan batas mo
 
 | Method | Endpoint | Deskripsi |
 |---|---|---|
-| POST | `/api/v1/auth/register` | Registrasi akun (delegasi ke Firebase Auth) |
+| POST | `/api/v1/auth/register` | Registrasi akun baru (email/password atau Google) |
+| POST | `/api/v1/auth/login` | Autentikasi pengguna & validasi verifikasi email |
+| POST | `/api/v1/auth/send-verification` | Kirim / kirim ulang link aktivasi & verifikasi email |
+| POST | `/api/v1/auth/reset-password` | Permintaan reset kata sandi via email |
 | POST | `/api/v1/profile` | Simpan/perbarui profil gizi |
 | GET | `/api/v1/profile/nutrition-target` | Ambil target gizi harian terhitung |
 | POST | `/api/v1/nutri-mate/chat` | Kirim pertanyaan ke Nutri Mate (Gemini) |
@@ -181,9 +191,11 @@ Dimulai sebagai monolith modular (mudah dikembangkan tim kecil), dengan batas mo
 | PUT | `/api/v1/user/progress/reminder-settings` | Atur reminder target harian (Fase 2) |
 
 ### 5.3 Autentikasi & Otorisasi
-- Login/registrasi ditangani **Firebase Authentication** (email/password, Google/Apple OAuth).
-- Setiap request ke backend menyertakan Firebase ID Token; backend memverifikasi token tersebut (Firebase Admin SDK) sebelum memproses.
-- **Role-based access**: `user`, `dokter_gizi`, `admin_konten`, `admin_sistem`.
+- Autentikasi mendukung **Email/Password** dan **Google OAuth** (Apple OAuth dijadwalkan pada Fase berikutnya).
+- **Email Verification Gate**: Akun berbasis email/password wajib diverifikasi sebelum mendapatkan hak akses penuh ke data gizi atau konsultasi medis. Akun via Google OAuth terverifikasi secara otomatis.
+- **Proteksi Brute-Force & Rate Limiting**: Batas 5 kali percobaan login gagal berturut-turut memicu penguncian sementara akun (*lockout*) selama 5 menit dengan countdown timer di sisi klien. Pengiriman email verifikasi dibatasi cooldown 60 detik.
+- **Kebijakan Kata Sandi (5 Kriteria)**: Minimal 8 karakter, kombinasi huruf kapital, huruf kecil, angka, dan karakter khusus/simbol.
+- **Role-based access**: Default `user`, serta `dokter_gizi`, `admin_konten`, `admin_sistem`.
 
 ## 6. Skema Database (ERD)
 
@@ -211,6 +223,9 @@ erDiagram
         string name
         string email
         string phone
+        boolean email_verified
+        string auth_provider
+        string role
         datetime created_at
     }
     NUTRITION_PROFILES {

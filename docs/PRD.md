@@ -62,10 +62,19 @@ NutriCare adalah aplikasi kesehatan gizi yang membantu pengguna memantau, memaha
 
 ## 6. Kebutuhan Fungsional per Fitur
 
-### 6.1 Registrasi & Profil Gizi
-- **FR-1.1** — Pengguna wajib mengisi form registrasi (nama, umur, jenis kelamin, tinggi badan, berat badan, tingkat aktivitas) sebelum dapat mengakses fitur lain.
-- **FR-1.2** — Sistem menghitung kebutuhan gizi harian (kalori, protein, karbohidrat, lemak, air) menggunakan formula standar (mis. Mifflin-St Jeor + faktor aktivitas).
-- **FR-1.3** — Pengguna dapat memperbarui profil kapan saja; target gizi dihitung ulang otomatis.
+### 6.1 Autentikasi, Registrasi & Profil Gizi
+- **FR-1.1** — Pengguna wajib mengisi form profil gizi (nama, umur, jenis kelamin, tinggi badan, berat badan, tingkat aktivitas) sebelum dapat mengakses dashboard dan fitur utama aplikasi.
+- **FR-1.2** — Sistem menghitung kebutuhan gizi harian (kalori, protein, karbohidrat, lemak, air) menggunakan formula standar medis (Mifflin-St Jeor + faktor aktivitas fisik).
+- **FR-1.3** — Pengguna dapat memperbarui data profil gizi kapan saja; target gizi harian otomatis dihitung ulang secara realtime.
+- **FR-1.4** *(Daftar & Verifikasi Email)* — Pendaftaran akun baru mewajibkan pengisian nama lengkap, email valid, kata sandi yang memenuhi kriteria keamanan, konfirmasi kata sandi, dan persetujuan UU PDP. Setelah berhasil submit, sistem mengirim email verifikasi dan mengarahkan pengguna ke layar verifikasi email.
+- **FR-1.5** *(Login Gate & Verifikasi Wajib)* — Pengguna wajib memverifikasi alamat email sebelum diberikan akses masuk ke aplikasi. Percobaan login dengan akun yang belum terverifikasi akan ditolak dan diarahkan ke alur Verifikasi Ulang (*Reverify*).
+- **FR-1.6** *(Google OAuth)* — Pengguna dapat masuk atau mendaftar secara instan menggunakan akun Google; akun via Google otomatis terverifikasi tanpa langkah verifikasi email terpisah dan langsung diarahkan ke form profil gizi bila baru mendaftar.
+- **FR-1.7** *(Lupa Kata Sandi)* — Pengguna dapat meminta reset kata sandi melalui modal/sheet interaktif dengan memasukkan email terdaftar untuk menerima tautan pemulihan.
+- **FR-1.8** *(Kebijakan Kekuatan Sandi)* — Form pendaftaran menampilkan meter indikator kekuatan kata sandi visual berbasis 5 kriteria wajib: minimal 8 karakter, huruf kapital (A-Z), huruf kecil (a-z), angka (0-9), dan simbol/karakter khusus (!@#$%^&*).
+- **FR-1.9** *(Persetujuan UU PDP)* — Registrasi menyertakan checkbox persetujuan eksplisit terhadap pemrosesan data kesehatan dan profil gizi pribadi sesuai amanat Undang-Undang No. 27/2022 tentang Pelindungan Data Pribadi.
+- **FR-1.10** *(Lockout Proteksi Brute-Force)* — Sistem menerapkan mekanisme keamanan lockout otomatis: 5 kali kegagalan login berturut-turut akan mengunci akses masuk selama 5 menit disertai banner countdown waktu tunggu.
+- **FR-1.11** *(Cooldown & Auto-Detect Verifikasi)* — Layar verifikasi email menyediakan tombol pintas "Buka Aplikasi Email" (dengan deteksi pintar domain Gmail, Yahoo, Outlook), cooldown kirim ulang email 60 detik, petunjuk folder spam, dan polling auto-detect status verifikasi aktif setiap 3,5 detik.
+- **FR-1.12** *(Draft Restore Registrasi)* — Data input pendaftaran sementara disimpan di local cache dengan masa berlaku (TTL) 30 menit agar data tidak hilang jika proses pendaftaran terinterupsi.
 
 ### 6.2 Nutri Mate (AI Gizi)
 - **FR-2.1** — Pengguna dapat bertanya seputar gizi dalam bahasa natural melalui chat.
