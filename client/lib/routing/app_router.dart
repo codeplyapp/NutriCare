@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutricare/domain/entities/entities.dart';
 import 'package:nutricare/presentation/providers/auth_provider.dart';
+import 'package:nutricare/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:nutricare/presentation/screens/auth/auth_screen.dart';
 import 'package:nutricare/presentation/screens/auth/email_verification_screen.dart';
 import 'package:nutricare/presentation/screens/auth/reverify_screen.dart';
@@ -33,12 +34,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/dashboard',
+    initialLocation: '/onboarding',
     redirect: (context, state) {
       final isAuth = authState.isAuthenticated;
       final isVerified = authState.isEmailVerified;
       final hasProfile = authState.hasProfile;
       final loc = state.uri.path;
+
+      // Onboarding intro selalu boleh diakses
+      if (loc == '/onboarding') return null;
 
       final isAuthRoute = loc == '/auth' || loc == '/login' || loc == '/register' || loc == '/reverify' || loc == '/email-verification';
 
@@ -68,6 +72,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
+      // Onboarding Intro (pertama kali buka app)
+      GoRoute(
+        path: '/onboarding',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const OnboardingScreen(),
+      ),
       GoRoute(
         path: '/auth',
         parentNavigatorKey: _rootNavigatorKey,
