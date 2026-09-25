@@ -82,7 +82,7 @@ class _OnboardingProfileScreenState extends ConsumerState<OnboardingProfileScree
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Halo, mari kenali tubuh Anda 👋',
+                      'Profil Gizi Personal 📋',
                       style: AppTypography.display.copyWith(
                         fontSize: 24,
                         color: AppColors.textPrimary,
@@ -92,6 +92,47 @@ class _OnboardingProfileScreenState extends ConsumerState<OnboardingProfileScree
                     Text(
                       'NutriCare menghitung target kalori, protein, dan air harian Anda secara akurat berdasarkan formula Mifflin-St Jeor.',
                       style: AppTypography.body.copyWith(color: AppColors.textSecondary),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Mascot Welcome Card
+                    AppCard(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      backgroundColor: AppColors.frozenWater50,
+                      border: Border.all(color: AppColors.frozenWater300, width: 1.5),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/mascot/mascot_presenting.png',
+                            height: 85,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Dr. Nutri Siap Membantumu!',
+                                  style: AppTypography.captionStrong.copyWith(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  'Isi data fisik di bawah agar rekomendasi menu & target gizimu terpersonalisasi optimal.',
+                                  style: AppTypography.finePrint.copyWith(
+                                    color: AppColors.textSecondary,
+                                    height: 1.35,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
 

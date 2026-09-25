@@ -199,6 +199,15 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 16),
+
+                  // 2.5 Dr. Nutri AI Assistant Mascot Banner
+                  FadeSlideEntrance(
+                    delay: const Duration(milliseconds: 75),
+                    child: _DrNutriBannerCard(
+                      onTap: () => context.go('/nutri-mate'),
+                    ),
+                  ),
                   const SizedBox(height: 18),
 
                   // 3. Weekly Date Strip Selector
@@ -960,3 +969,94 @@ class _MealBreakdownCard extends StatelessWidget {
     );
   }
 }
+
+/// Dr. Nutri AI Interactive Mascot Banner Card
+class _DrNutriBannerCard extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _DrNutriBannerCard({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      onTap: onTap,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      backgroundColor: AppColors.frozenWater50,
+      border: Border.all(color: AppColors.frozenWater300, width: 1.5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.frozenWater200,
+                    borderRadius: AppShapes.pill,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.auto_awesome, size: 12, color: AppColors.primaryHover),
+                      const SizedBox(width: 4),
+                      Text(
+                        'ASISTEN GIZI AI',
+                        style: AppTypography.finePrint.copyWith(
+                          color: AppColors.primaryHover,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 10.5,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Tanya Dr. Nutri',
+                  style: AppTypography.captionStrong.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Analisis menu, cek kalori harian, & konsultasi nutrisi langsung bersama AI.',
+                  style: AppTypography.finePrint.copyWith(
+                    color: AppColors.textSecondary,
+                    height: 1.35,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Text(
+                      'Mulai Tanya Sekarang',
+                      style: AppTypography.captionStrong.copyWith(
+                        color: AppColors.primaryHover,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(Icons.arrow_forward_rounded, size: 15, color: AppColors.primaryHover),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Image.asset(
+            'assets/images/mascot/mascot_main.png',
+            height: 120,
+            fit: BoxFit.contain,
+          ),
+        ],
+      ),
+    );
+  }
+}
+

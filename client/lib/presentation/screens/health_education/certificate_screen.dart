@@ -33,6 +33,35 @@ class CertificateScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Mascot Congratulations Banner
+                  Center(
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/images/mascot/mascot_thumbs_up.png',
+                          height: 120,
+                          fit: BoxFit.contain,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Apresiasi Kompetensi Nutrisi 🏆',
+                          style: AppTypography.captionStrong.copyWith(
+                            fontSize: 16,
+                            color: AppColors.primaryHover,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Dr. Nutri mengonfirmasi penyelesaian seluruh kurikulum gizi klinis.',
+                          style: AppTypography.finePrint.copyWith(color: AppColors.textSecondary),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+
                   // Certificate Container
                   AppCard(
                     padding: const EdgeInsets.all(28),

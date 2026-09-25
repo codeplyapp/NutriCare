@@ -64,6 +64,50 @@ class DoctorListScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(height: AppSpacing.md),
+
+                  // Mascot Verification Guarantee Banner
+                  FadeSlideEntrance(
+                    index: 1,
+                    child: AppCard(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      backgroundColor: AppColors.medicalSurface,
+                      border: Border.all(color: AppColors.medicalAccent, width: 1.5),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/mascot/mascot_main.png',
+                            height: 85,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Jaminan Medis Terpercaya',
+                                  style: AppTypography.captionStrong.copyWith(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.medicalPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  'Seluruh dokter spesialis & nutrisionis klinis NutriCare memiliki Surat Izin Praktik (SIP) aktif.',
+                                  style: AppTypography.finePrint.copyWith(
+                                    color: AppColors.medicalText,
+                                    height: 1.35,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.lg),
 
                   if (docState.isLoading)

@@ -97,22 +97,16 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: res.passed ? AppColors.frozenWater100 : const Color(0xFFFEE2E2),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  res.passed ? Icons.workspace_premium_rounded : Icons.replay_rounded,
-                  color: res.passed ? AppColors.frozenWater800 : const Color(0xFFDC2626),
-                  size: 36,
-                ),
+              Image.asset(
+                res.passed
+                    ? 'assets/images/mascot/mascot_thumbs_up.png'
+                    : 'assets/images/mascot/mascot_pointing.png',
+                height: 110,
+                fit: BoxFit.contain,
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
-                res.passed ? 'Kelulusan Sertifikasi Berhasil!' : 'Belum Mencapai Ambang Kelulusan',
+                res.passed ? 'Selamat! Anda Lulus Ujian 🎉' : 'Belum Mencapai Ambang Kelulusan',
                 style: AppTypography.tagline.copyWith(fontSize: 18),
                 textAlign: TextAlign.center,
               ),

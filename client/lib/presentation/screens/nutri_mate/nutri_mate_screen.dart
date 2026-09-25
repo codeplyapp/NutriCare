@@ -63,18 +63,42 @@ class _NutriMateScreenState extends ConsumerState<NutriMateScreen> {
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(AppSpacing.xs),
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
-                color: AppColors.tertiaryContainer,
-                borderRadius: AppShapes.sm,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.border),
+                image: const DecorationImage(
+                  image: AssetImage('assets/images/mascot/mascot_avatar_smile.png'),
+                  fit: BoxFit.cover,
+                ),
               ),
-              child: const Icon(Icons.auto_awesome_rounded, color: AppColors.tertiary, size: 20),
             ),
             const SizedBox(width: AppSpacing.sm),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Nutri Mate', style: AppTypography.tagline.copyWith(fontSize: 17)),
+                Row(
+                  children: [
+                    Text('Nutri Mate', style: AppTypography.tagline.copyWith(fontSize: 17)),
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.frozenWater100,
+                        borderRadius: AppShapes.pill,
+                      ),
+                      child: Text(
+                        'Dr. Nutri',
+                        style: AppTypography.finePrint.copyWith(
+                          color: AppColors.frozenWater800,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 Text('AI Nutrition Assistant • Gemini', style: AppTypography.finePrint),
               ],
             ),
@@ -84,112 +108,179 @@ class _NutriMateScreenState extends ConsumerState<NutriMateScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Chat Messages List
+            // Chat Messages List or Welcome Mascot State
             Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.all(AppSpacing.md),
-                itemCount: chatState.messages.length,
-                itemBuilder: (context, index) {
-                  final msg = chatState.messages[index];
-                  final isUser = msg.sender == 'user';
-
-                  return FadeSlideEntrance(
-                    index: index < 4 ? index : 0,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                      child: Row(
-                        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (!isUser) ...[
-                            CircleAvatar(
-                              radius: 16,
-                              backgroundColor: AppColors.aiAccent,
-                              child: const Icon(Icons.auto_awesome, color: Colors.white, size: 16),
+              child: chatState.messages.isEmpty
+                  ? Center(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(AppSpacing.xl),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/mascot/mascot_waving.png',
+                              height: 180,
+                              fit: BoxFit.contain,
                             ),
-                            const SizedBox(width: AppSpacing.xs),
-                          ],
-                          Flexible(
-                            child: Column(
-                              crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(AppSpacing.md),
-                                  decoration: BoxDecoration(
-                                    color: isUser ? AppColors.primaryLight : AppColors.aiSurface,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: const Radius.circular(16),
-                                      topRight: const Radius.circular(16),
-                                      bottomLeft: Radius.circular(isUser ? 16 : 4),
-                                      bottomRight: Radius.circular(isUser ? 4 : 16),
-                                    ),
-                                    border: isUser ? null : Border.all(color: AppColors.borderSubtle),
-                                  ),
-                                  child: Text(
-                                    msg.message,
-                                    style: AppTypography.body.copyWith(
-                                      color: isUser ? AppColors.onPrimaryLight : AppColors.aiText,
-                                    ),
-                                  ),
+                            const SizedBox(height: AppSpacing.md),
+                            Text(
+                              'Halo! Saya Dr. Nutri 👋',
+                              style: AppTypography.display.copyWith(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 8),
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 380),
+                              child: Text(
+                                'Asisten gizi dan nutrisi pribadimu didukung Gemini AI. Ceritakan makananmu atau tanyakan tips gizi harian!',
+                                style: AppTypography.body.copyWith(
+                                  color: AppColors.textSecondary,
+                                  height: 1.45,
                                 ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              alignment: WrapAlignment.center,
+                              children: _quickPrompts.map((p) {
+                                return ActionChip(
+                                  label: Text(
+                                    p,
+                                    style: AppTypography.caption.copyWith(
+                                      color: AppColors.primaryHover,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  backgroundColor: AppColors.frozenWater50,
+                                  side: const BorderSide(color: AppColors.frozenWater200),
+                                  shape: AppShapes.pillShape(),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  onPressed: () => _sendMessage(p),
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      itemCount: chatState.messages.length,
+                      itemBuilder: (context, index) {
+                        final msg = chatState.messages[index];
+                        final isUser = msg.sender == 'user';
 
-                                // Serious Health Escalation Card (Medical Blue)
-                                if (msg.isEscalated) ...[
-                                  const SizedBox(height: AppSpacing.xs),
-                                  AppCard(
-                                    padding: const EdgeInsets.all(AppSpacing.sm),
-                                    backgroundColor: AppColors.medicalSurface,
-                                    border: Border.all(color: AppColors.medicalAccent, width: 1.5),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            const Icon(Icons.medical_services_rounded, color: AppColors.medicalPrimary, size: 18),
-                                            const SizedBox(width: 6),
-                                            Text(
-                                              'Rekomendasi Nutri Doc',
-                                              style: AppTypography.captionStrong.copyWith(color: AppColors.medicalPrimary),
-                                            ),
-                                          ],
+                        return FadeSlideEntrance(
+                          index: index < 4 ? index : 0,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                            child: Row(
+                              mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (!isUser) ...[
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: AppColors.border),
+                                      image: const DecorationImage(
+                                        image: AssetImage('assets/images/mascot/mascot_avatar_smile.png'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppSpacing.xs),
+                                ],
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(AppSpacing.md),
+                                        decoration: BoxDecoration(
+                                          color: isUser ? AppColors.primaryLight : AppColors.aiSurface,
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: const Radius.circular(16),
+                                            topRight: const Radius.circular(16),
+                                            bottomLeft: Radius.circular(isUser ? 16 : 4),
+                                            bottomRight: Radius.circular(isUser ? 4 : 16),
+                                          ),
+                                          border: isUser ? null : Border.all(color: AppColors.borderSubtle),
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Konsultasikan keluhan ini dengan dokter spesialis kami untuk penanganan medis tepat.',
-                                          style: AppTypography.finePrint.copyWith(color: AppColors.medicalText),
+                                        child: Text(
+                                          msg.message,
+                                          style: AppTypography.body.copyWith(
+                                            color: isUser ? AppColors.onPrimaryLight : AppColors.aiText,
+                                          ),
                                         ),
+                                      ),
+
+                                      // Serious Health Escalation Card (Medical Blue)
+                                      if (msg.isEscalated) ...[
                                         const SizedBox(height: AppSpacing.xs),
-                                        AppButton(
-                                          text: 'Booking Nutri Doc',
-                                          variant: AppButtonVariant.medical,
-                                          onPressed: () => context.go('/dokter-gizi'),
+                                        AppCard(
+                                          padding: const EdgeInsets.all(AppSpacing.sm),
+                                          backgroundColor: AppColors.medicalSurface,
+                                          border: Border.all(color: AppColors.medicalAccent, width: 1.5),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  const Icon(Icons.medical_services_rounded, color: AppColors.medicalPrimary, size: 18),
+                                                  const SizedBox(width: 6),
+                                                  Text(
+                                                    'Rekomendasi Nutri Doc',
+                                                    style: AppTypography.captionStrong.copyWith(color: AppColors.medicalPrimary),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                'Konsultasikan keluhan ini dengan dokter spesialis kami untuk penanganan medis tepat.',
+                                                style: AppTypography.finePrint.copyWith(color: AppColors.medicalText),
+                                              ),
+                                              const SizedBox(height: AppSpacing.xs),
+                                              AppButton(
+                                                text: 'Booking Nutri Doc',
+                                                variant: AppButtonVariant.medical,
+                                                onPressed: () => context.go('/dokter-gizi'),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
-                                    ),
-                                  ),
-                                ],
 
-                                // Educational Disclaimer
-                                if (msg.disclaimer != null) ...[
-                                  const SizedBox(height: 4),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                                    child: Text(
-                                      '⚠️ ${msg.disclaimer!}',
-                                      style: AppTypography.microLegal.copyWith(color: AppColors.inkMuted48),
-                                    ),
+                                      // Educational Disclaimer
+                                      if (msg.disclaimer != null) ...[
+                                        const SizedBox(height: 4),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                                          child: Text(
+                                            '⚠️ ${msg.disclaimer!}',
+                                            style: AppTypography.microLegal.copyWith(color: AppColors.inkMuted48),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
                                   ),
-                                ],
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
 
             // AI Thinking indicator with explicit wave animation
@@ -198,10 +289,17 @@ class _NutriMateScreenState extends ConsumerState<NutriMateScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundColor: AppColors.darkAmethyst100,
-                      child: const Icon(Icons.auto_awesome, color: AppColors.aiAccent, size: 16),
+                    Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.border),
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/mascot/mascot_avatar_smile.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     const AITypingIndicator(),

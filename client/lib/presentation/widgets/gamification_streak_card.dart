@@ -207,18 +207,35 @@ class GamificationStreakCard extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.md),
                 Row(
                   children: [
-                    const Icon(Icons.workspace_premium_rounded, color: AppColors.frozenWater800, size: 24),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Koleksi Lencana Privat Anda',
-                      style: AppTypography.tagline.copyWith(fontSize: 18),
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.frozenWater300, width: 1.5),
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/mascot/mascot_avatar_happy.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Koleksi Lencana Privat',
+                            style: AppTypography.tagline.copyWith(fontSize: 18),
+                          ),
+                          Text(
+                            'Pencapaian gizi yang diakui Dr. Nutri (UU PDP)',
+                            style: AppTypography.finePrint.copyWith(color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Pencapaian gizi pribadi yang diraih (Data terlindungi UU PDP)',
-                  style: AppTypography.finePrint.copyWith(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Flexible(

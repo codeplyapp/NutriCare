@@ -294,9 +294,19 @@ class _BMICalculatorScreenState extends ConsumerState<BMICalculatorScreen> {
                   ),
                   const SizedBox(height: AppSpacing.md),
 
-                  // BMI Category Reference Table
+                  // Dr. Nutri Clinical Advice Card
                   FadeSlideEntrance(
                     index: 3,
+                    child: _DrNutriBMIAdviceCard(
+                      categoryId: bmiResult?.categoryId ?? 'normal',
+                      advice: bmiResult?.recommendation ?? 'Pertahankan pola makan seimbang dan hidrasi yang cukup setiap hari.',
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+
+                  // BMI Category Reference Table
+                  FadeSlideEntrance(
+                    index: 4,
                     child: AppCard(
                       padding: const EdgeInsets.all(AppSpacing.md),
                       child: Column(
@@ -317,6 +327,87 @@ class _BMICalculatorScreenState extends ConsumerState<BMICalculatorScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _DrNutriBMIAdviceCard extends StatelessWidget {
+  final String categoryId;
+  final String advice;
+
+  const _DrNutriBMIAdviceCard({
+    required this.categoryId,
+    required this.advice,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    String title = 'Catatan Klinis Dr. Nutri';
+    String pose = 'assets/images/mascot/mascot_pointing.png';
+    Color bg = AppColors.frozenWater50;
+    Color border = AppColors.frozenWater300;
+
+    if (categoryId == 'underweight') {
+      title = 'Saran Nutrisi: Berat Kurang';
+      pose = 'assets/images/mascot/mascot_pointing.png';
+      bg = AppColors.turquoise50;
+      border = AppColors.turquoise200;
+    } else if (categoryId == 'normal') {
+      title = 'Saran Nutrisi: Kondisi Ideal';
+      pose = 'assets/images/mascot/mascot_thumbs_up.png';
+      bg = AppColors.frozenWater50;
+      border = AppColors.frozenWater300;
+    } else if (categoryId == 'overweight' || categoryId == 'obese') {
+      title = 'Saran Nutrisi: Kontrol Kalori';
+      pose = 'assets/images/mascot/mascot_pointing.png';
+      bg = const Color(0xFFFEF3C7);
+      border = const Color(0xFFFDE68A);
+    }
+
+    return AppCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      backgroundColor: bg,
+      border: Border.all(color: border, width: 1.5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            pose,
+            height: 90,
+            fit: BoxFit.contain,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.medical_information_rounded, size: 16, color: AppColors.primaryHover),
+                    const SizedBox(width: 5),
+                    Text(
+                      title,
+                      style: AppTypography.captionStrong.copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  advice,
+                  style: AppTypography.finePrint.copyWith(
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

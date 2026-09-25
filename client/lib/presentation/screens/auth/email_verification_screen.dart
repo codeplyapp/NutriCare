@@ -187,23 +187,15 @@ class _EmailVerificationScreenState extends ConsumerState<EmailVerificationScree
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Icon Envelope
+                        // Mascot Waving
                         Center(
-                          child: Container(
-                            width: 72,
-                            height: 72,
-                            decoration: BoxDecoration(
-                              color: AppColors.frozenWater100,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.mark_email_unread_rounded,
-                              color: AppColors.frozenWater800,
-                              size: 36,
-                            ),
+                          child: Image.asset(
+                            'assets/images/mascot/mascot_waving.png',
+                            height: 115,
+                            fit: BoxFit.contain,
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.md),
+                        const SizedBox(height: AppSpacing.sm),
 
                         Text(
                           'Cek Kotak Masuk Email Anda',
